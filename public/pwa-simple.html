@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigRed PWA Simple Test</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Simple PWA test for BigRed">
+    <meta name="theme-color" content="#dc2626">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="BigRed">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- PWA Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/icon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/icon-16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/public/icon-192.png">
+    <link rel="apple-touch-icon" href="/public/icon-192.png">
+    <link rel="manifest" href="/public/manifest.json">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #b91c1c; }
+        .icon-test {
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+        }
+        .icon-test img {
+            border: 1px solid #ccc;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>BigRed PWA Simple Test</h1>
+    
+    <div class="card">
+        <h2>PWA Status</h2>
+        <div id="pwaStatus" class="status info">Checking...</div>
+        <div id="swStatus" class="status info">Checking...</div>
+        <div id="installStatus" class="status info">Checking...</div>
+    </div>
+    
+    <div class="card">
+        <h2>Icons Test</h2>
+        <div class="icon-test">
+            <img src="/public/icon-16.png" alt="16x16" width="16" height="16">
+            <br>16x16
+        </div>
+        <div class="icon-test">
+            <img src="/public/icon-32.png" alt="32x32" width="32" height="32">
+            <br>32x32
+        </div>
+        <div class="icon-test">
+            <img src="/public/icon-192.png" alt="192x192" width="192" height="192">
+            <br>192x192
+        </div>
+        <div class="icon-test">
+            <img src="/public/icon-512.png" alt="512x512" width="128" height="128">
+            <br>512x512
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2>Actions</h2>
+        <button onclick="checkStatus()">Check Status</button>
+        <button onclick="generateIcons()">Generate Icons</button>
+        <button onclick="testInstall()">Test Install</button>
+    </div>
+
+    <script>
+        let deferredPrompt;
+        
+        // Проверяем PWA статус
+        function checkStatus() {
+            const pwaStatus = document.getElementById('pwaStatus');
+            const swStatus = document.getElementById('swStatus');
+            const installStatus = document.getElementById('installStatus');
+            
+            // Service Worker
+            if ('serviceWorker' in navigator) {
+                swStatus.textContent = '✅ Service Worker supported';
+                swStatus.className = 'status success';
+            } else {
+                swStatus.textContent = '❌ Service Worker not supported';
+                swStatus.className = 'status error';
+            }
+            
+            // PWA Install
+            if (deferredPrompt) {
+                installStatus.textContent = '✅ Install prompt available';
+                installStatus.className = 'status success';
+            } else {
+                installStatus.textContent = '❌ Install prompt not available';
+                installStatus.className = 'status warning';
+            }
+            
+            // PWA Mode
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                pwaStatus.textContent = '✅ Running as PWA';
+                pwaStatus.className = 'status success';
+            } else {
+                pwaStatus.textContent = 'ℹ️ Running in browser';
+                pwaStatus.className = 'status info';
+            }
+        }
+        
+        // Генерируем иконки
+        function generateIcons() {
+            const sizes = [16, 32, 192, 512];
+            sizes.forEach(size => {
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+                
+                // Красный фон
+                ctx.fillStyle = '#dc2626';
+                ctx.fillRect(0, 0, size, size);
+                
+                // Белый текст BR
+                ctx.fillStyle = 'white';
+                ctx.font = `bold ${size * 0.6}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('BR', size/2, size/2);
+                
+                // Скачиваем
+                const link = document.createElement('a');
+                link.download = `icon-${size}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+            
+            alert('Icons generated and downloaded! Replace the placeholder files with these PNG files.');
+        }
+        
+        // Тестируем установку
+        function testInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    } else {
+                        console.log('User dismissed the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                alert('Install prompt not available. Make sure you have a valid manifest and icons.');
+            }
+        }
+        
+        // Слушаем события PWA
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('beforeinstallprompt fired!');
+            e.preventDefault();
+            deferredPrompt = e;
+            checkStatus();
+        });
+        
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA was installed');
+            checkStatus();
+        });
+        
+        // Регистрируем Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/public/sw.js')
+                .then((registration) => {
+                    console.log('SW registered:', registration);
+                    checkStatus();
+                })
+                .catch((error) => {
+                    console.error('SW registration failed:', error);
+                    checkStatus();
+                });
+        }
+        
+        // Проверяем статус при загрузке
+        window.addEventListener('load', () => {
+            setTimeout(checkStatus, 1000);
+        });
+    </script>
+</body>
+</html>
+

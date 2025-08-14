@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigRed Workshop</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Service management system for buggies and tickets">
+    <meta name="theme-color" content="#be123c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="BuggyOps">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- PWA Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="manifest" href="/manifest.webmanifest">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="flex flex-col items-center justify-center min-h-screen bg-red-500 text-white px-4">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold mb-2">BigRed Workshop</h1>
+            <p class="text-lg opacity-90">Choose your role to continue</p>
+        </div>
+
+        <div class="role-grid w-full max-w-3xl">
+          <!-- Mechanic button -->
+          <a href="./mechanic-login.html" aria-label="Mechanic login"
+             class="role-btn inline-flex items-center justify-center
+                    rounded-xl bg-white text-red-600 font-semibold
+                    px-6 py-4 shadow-lg transition-all duration-200
+                    hover:shadow-xl hover:-translate-y-0.5
+                    active:translate-y-0 active:shadow-lg
+                    focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50">
+            I am a Mechanic
+          </a>
+
+          <!-- Guide button -->
+          <a href="./guide-login.html" aria-label="Guide login"
+             class="role-btn inline-flex items-center justify-center
+                    rounded-xl bg-white text-red-600 font-semibold
+                    px-6 py-4 shadow-lg transition-all duration-200
+                    hover:shadow-xl hover:-translate-y-0.5
+                    active:translate-y-0 active:shadow-lg
+                    focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50">
+            I am a Guide
+          </a>
+
+          <!-- Admin button -->
+          <a href="./admin-login.html" aria-label="Admin login"
+             class="role-btn inline-flex items-center justify-center
+                    rounded-xl bg-white text-red-600 font-semibold
+                    px-6 py-4 shadow-lg transition-all duration-200
+                    hover:shadow-xl hover:-translate-y-0.5
+                    active:translate-y-0 active:shadow-lg
+                    focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50">
+            I am an Admin
+          </a>
+        </div>
+    </div>
+
+  <style>
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      justify-items: center;
+    }
+    @media (min-width: 1024px) {
+      .role-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .role-btn { width: 100%; max-width: 260px; }
+  </style>
+  
+  <!-- PWA Scripts -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('[PWA] SW registered', reg.scope))
+          .catch(err => console.error('[PWA] SW register error', err));
+      });
+    }
+  </script>
+  <script src="/pwa-install.js"></script>
+  </body>
+</html>

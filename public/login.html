@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigRed Workshop - Login</title>
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="login-container">
+            <div class="login-card">
+                <h1>BigRed Workshop</h1>
+                <h2>Login for Mechanics</h2>
+                
+                <form id="login-form" class="login-form">
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required class="form-input">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-full">Login</button>
+                </form>
+                
+                <div id="login-error" class="error hidden">
+                    Invalid email or password
+                </div>
+                
+                <div id="login-loading" class="loading hidden">
+                    Logging in...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./supabase.js"></script>
+    <script src="./api.js"></script>
+    <script>
+        // Logic for the login page
+        document.addEventListener('DOMContentLoaded', async function() {
+            const loginForm = document.getElementById('login-form');
+            const loginError = document.getElementById('login-error');
+            const loginLoading = document.getElementById('login-loading');
+            
+            // Check if the user is authenticated
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                window.location.href = './index.html';
+                return;
+            }
+            
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                // Show loading
+                loginLoading.classList.remove('hidden');
+                loginError.classList.add('hidden');
+                
+                try {
+                    const { data, error } = await login(email, password);
+                    
+                    if (error) {
+                        throw error;
+                    }
+                    
+                    // Successful login - redirect to main page
+                    window.location.href = './index.html';
+                    
+                } catch (error) {
+                    console.error('Login error:', error);
+                    loginError.textContent = 'Invalid email or password';
+                    loginError.classList.remove('hidden');
+                } finally {
+                    loginLoading.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

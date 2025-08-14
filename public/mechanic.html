@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigRed Workshop - Tickets</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Mechanic interface for BigRed Workshop ticket management">
+    <meta name="theme-color" content="#dc2626">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="BigRed Mechanic">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- PWA Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="manifest" href="/manifest.webmanifest">
+    
+
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <div class="p-4 md:p-6">
+            <div class="top-bar">
+      <div class="role-name">
+        <h1 id="roleTitle">Mechanic</h1>
+        <span id="userNameBadge" class="user-name">—</span>
+      </div>
+      <button id="logoutBtn" class="btn-logout" type="button">Logout</button>
+    </div>
+
+                    <div class="card">
+      <div class="card-header">Filters</div>
+
+            <form id="filtersForm" class="filters-grid">
+                <div class="filter-item">
+                    <label for="filterStatus" class="filter-label">Status</label>
+                    <select id="filterStatus" class="select-control">
+                        <option value="ALL" selected>All Statuses</option>
+                        <option value="open">open</option>
+                        <option value="in_progress">in_progress</option>
+                        <option value="done">done</option>
+                    </select>
+                </div>
+
+                <div class="filter-item">
+                    <label for="filterPriority" class="filter-label">Priority</label>
+                    <select id="filterPriority" class="select-control">
+                        <option value="ALL" selected>All Priorities</option>
+                        <option value="low">low</option>
+                        <option value="medium">medium</option>
+                        <option value="high">high</option>
+                    </select>
+                </div>
+            </form>
+
+            <div class="btn-row">
+                <button id="addTicketBtn" class="primary-btn">Add Ticket</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div id="cards" class="flex flex-col gap-5"></div>
+            <div class="flex justify-center mt-4">
+                <button id="loadMore" class="bg-red-500 hover:bg-red-600 text-white font-semibold px-5 py-3 rounded-xl shadow-lg transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-red-300">Load more</button>
+            </div>
+        </div>
+
+        <!-- Dealer visit section -->
+        <section id="dealer-mech" class="card space-y-4">
+          <h2 class="section-title">Dealer visit</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="lbl">Buggy</label>
+              <select id="dealer-mech-buggy" class="select">
+                <option value="">Select buggy…</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="lbl">Issue</label>
+              <input id="dealer-mech-issue" class="input" placeholder="e.g. gearbox noise" />
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button id="dealer-mech-give-btn" class="btn btn-primary">Give to dealer</button>
+          </div>
+
+          <div class="mt-4">
+            <h3 class="sub-title">My active at dealer</h3>
+            <ul id="dealer-mech-active-list" class="space-y-2"></ul>
+          </div>
+        </section>
+
+        <div id="dealer-active" class="mt-6 space-y-3">
+          <!-- Active dealer visits will appear here -->
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="ticketModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="createTicketTitle" hidden>
+      <div class="modal-header">
+        <h3 id="createTicketTitle">New Ticket</h3>
+      </div>
+      <div class="modal-body">
+        <div class="space-y-4">
+          <div>
+            <label class="text-sm font-medium text-gray-700 mb-2 block">Buggy</label>
+            <select id="m_buggy" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-gray-800 shadow-sm">
+                <option value="" class="text-gray-400">— No buggy —</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-700 mb-2 block">Priority</label>
+            <select id="m_priority" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-gray-800 shadow-sm">
+                <option value="low">low</option>
+                <option value="medium" selected>medium</option>
+                <option value="high">high</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-700 mb-2 block">Description</label>
+            <input id="m_desc" placeholder="e.g. oil change" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-gray-800 shadow-sm" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="btn btn-cancel"
+          data-modal-cancel="ticketModal">Cancel</button>
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          id="m_save">Create</button>
+      </div>
+    </div>
+
+    <!-- keep ONE module script only -->
+    <div id="toastWrap" class="toast-wrap"></div>
+    <!-- Supabase client with persistent session -->
+    <script type="module" src="/public/supabase.js"></script>
+    <script type="module" src="./supabase.js"></script>
+    <script type="module" src="./app.js"></script>
+    
+    <!-- PWA Scripts -->
+    <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(r => console.log('[PWA] SW registered', r.scope))
+        .catch(err => console.error('[PWA] SW register error', err));
+    }
+    </script>
+    <script src="/pwa-install.js"></script>
+  </body>
+</html>

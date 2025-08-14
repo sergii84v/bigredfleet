@@ -1,0 +1,371 @@
+/* Admin-only styles. Namespaced by #admin-app to avoid leaking. */
+
+#admin-app .ticket-card {
+  position: relative;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.06);
+  overflow: hidden;
+}
+
+/* Left priority stripe only on the card itself */
+#admin-app .ticket-card { border-left-width: 4px; border-left-style: solid; }
+
+/* Neutralize any inherited pseudo elements that might add extra stripes */
+#admin-app .ticket-card::before,
+#admin-app .card::before,
+#admin-app .cards::before,
+#admin-app .panel::before,
+#admin-app .section::before {
+  content: none !important;
+}
+
+/* Table tweaks */
+#admin-app table th, #admin-app table td { border-color: #eef2f7; }
+
+/* Shared admin card & filters (used by Tickets and Hours) */
+.admin-stack { display:flex; flex-direction:column; gap:18px; }
+
+.card { background:#fff; border-radius:16px; box-shadow:0 8px 28px rgba(16,24,40,.06); padding:16px 18px; }
+.card-title { font-size:20px; font-weight:700; margin:0 0 12px; }
+
+.filter-bar { display:flex; flex-wrap:wrap; align-items:center; gap:12px 16px; margin:8px 0 10px; }
+.filter-label { color:#6b7280; font-size:14px; }
+.filter-select, .filter-input { border:1px solid #e5e7eb; border-radius:12px; padding:10px 14px; font-size:16px; background:#fff; }
+.filter-select { min-width:210px; }
+.filter-input { min-width:200px; }
+
+.btn { border-radius:12px; padding:10px 16px; font-weight:600; transition: transform .06s ease, box-shadow .12s ease; }
+.btn:active { transform: translateY(1px); }
+.btn-primary { background:#ef4444; color:#fff; border:none; box-shadow:0 8px 24px rgba(239,68,68,.25); }
+.btn-primary:hover { filter:brightness(1.05); }
+.btn-soft { background:#f9fafb; color:#111827; border:1px solid #e5e7eb; }
+
+.empty-state { color:#6b7280; padding:10px 0; }
+
+/* Simple table wrappers used by hours results */
+.table-wrap { margin-top: 12px; }
+.table-scroll { overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table thead th { text-align: left; color: #6b7280; font-weight: 600; padding: 10px 12px; border-bottom: 1px solid #e5e7eb; white-space: nowrap; }
+.table tbody td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
+.table tbody tr:hover { background: #f8fafc; }
+.nowrap { white-space: nowrap; }
+.muted { color: #6b7280; }
+
+@media (max-width: 480px) {
+  .filter-input { min-width:140px; }
+  .btn { height:38px; border-radius:10px; }
+}
+
+/* Table totals styling for Hours */
+#admin-app .table.hours-table tfoot td {
+  font-weight: 600;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  background: #fafbfc;
+}
+
+#admin-app .table.hours-table .hours-total-cell {
+  text-align: right;
+}
+
+/* Mobile total badge */
+#admin-app .hours-total-mobile {
+  display: none;
+  margin-top: 12px;
+  font-weight: 600;
+  padding: 8px 12px;
+  background: #f4f6f8;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 10px;
+  width: max-content;
+}
+
+@media (max-width: 640px) {
+  #admin-app .hours-total-mobile {
+    display: inline-block;
+  }
+}
+
+/* Job Cards minimal styles */
+#jobcards-card .filters-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: end;
+  margin-bottom: 12px;
+}
+#jobcards-card .filter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+}
+#jobcards-card .list .empty {
+  padding: 12px;
+}
+#jobcards-card .muted {
+  color: #6b7280; /* tailwind gray-500 vibe */
+  font-size: 0.9rem;
+}
+#jobcards-card .pager {
+  display:flex; gap:12px; justify-content:flex-end; align-items:center; margin-top:8px;
+}
+
+/* Job Cards list: remove bullets and make grid */
+#jobcards-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px; /* spacing between cards */
+}
+
+/* 2 columns on large screens */
+@media (min-width: 1024px) {
+  #jobcards-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Card look */
+.jc-card {
+  border: 1px solid #E6EDF5;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(16, 24, 40, 0.04);
+  padding: 16px;
+}
+
+/* Header: #buggy left, date right */
+.jc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.jc-id {
+  font-weight: 700;
+  font-size: 20px;
+  color: #0F172A;
+}
+
+.jc-date {
+  color: #6B7280;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* Chips row */
+.jc-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* Chip */
+.jc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #F1F5F9;
+  color: #334155;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Description */
+.jc-desc {
+  font-size: 16px;
+  color: #0F172A;
+}
+
+/* Optional: limit extreme width of the whole section content on huge screens */
+#jobcards-card .card-body {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Toasts */
+.toast-container {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  min-width: 220px;
+  max-width: 360px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  color: #0b1220;
+  background: #fff;
+  font-weight: 500;
+  pointer-events: all;
+  animation: toast-in .2s ease-out, toast-out .2s ease-in 4.2s forwards;
+}
+.toast.success { border-left: 6px solid #22c55e; }
+.toast.error   { border-left: 6px solid #ef4444; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(-8px) } to { opacity: 1; transform: translateY(0) } }
+@keyframes toast-out { to { opacity: 0; transform: translateY(-8px) } }
+
+.field-error {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #ef4444;
+}
+.hidden { display: none; }
+
+/* Optional loading state */
+.is-loading { opacity: .7; pointer-events: none; }
+
+/* Modal centering for admin */
+.admin-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-y: auto;
+}
+.admin-modal.open { display: flex; }
+
+.admin-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.admin-modal__panel {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 16px 48px rgba(0,0,0,.2);
+  padding: 20px;
+}
+
+@media (max-height: 620px) {
+  .admin-modal {
+    align-items: flex-start;
+    padding-top: 32px;
+  }
+}
+
+/* Neutralize legacy top/transform */
+.admin-modal__panel { top: auto !important; transform: none !important; }
+
+/* Buggies list */
+.buggies-head{ display:flex; align-items:center; justify-content:space-between; margin-top:8px }
+.badge{ background:#eef2ff; color:#3730a3; border-radius:999px; padding:2px 8px; font-weight:700; font-size:12px }
+.buggies-list{ display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; margin-top:12px }
+.buggy-chip{ background:#f8fafc; border:1px solid #e2e8f0; padding:10px 12px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; font-weight:600 }
+.buggy-chip__num{ color:#0f172a }
+.buggy-chip__date{ color:#64748b; font-weight:500; font-size:12px }
+
+/* Generic modal utilities (scoped to admin to avoid leaking) */
+#admin-app .modal { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(15,23,42,.45); z-index:60 }
+#admin-app .modal.hidden{ display:none }
+#admin-app .modal-card{ width:min(640px,92vw); background:#fff; border-radius:16px; padding:20px; box-shadow:0 30px 60px rgba(0,0,0,.15) }
+#admin-app .field-error{ color:#ef4444; font-size:12px; margin-top:6px }
+#admin-app .field-error.hidden{ display:none }
+
+/* ---- Tickets top filters ---- */
+#tickets-card .filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 16px;
+  align-items: end;
+  margin-bottom: 12px;
+}
+#tickets-card .filters .field { display: grid; gap: 6px; }
+#tickets-card .filters label { font-size: 12px; font-weight: 600; color: #6b7280; }
+#tickets-card .filters .select,
+#tickets-card .filters select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-size: 16px;
+  outline: none;
+}
+#tickets-card .filters .select:focus,
+#tickets-card .filters select:focus {
+  border-color: #d1d5db;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.15);
+}
+#tickets-card .filters .actions { display: flex; gap: 10px; align-items: end; }
+#tickets-card .filters .btn-reset {
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid #fecaca;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-weight: 600;
+  transition: .15s ease;
+}
+#tickets-card .filters .btn-reset:hover { background: #fecaca; border-color: #fca5a5; }
+
+@media (max-width: 640px) {
+  #tickets-card .filters { grid-template-columns: 1fr; gap: 12px; }
+  #tickets-card .filters .actions { justify-content: stretch; }
+  #tickets-card .filters .btn-reset { width: 100%; }
+}
+
+/* Job Cards – make filters look like other pills */
+#jobcards-card .select,
+#jobcards-card .input {
+  appearance: none;
+  background: #fff;
+  border: 1px solid rgba(148,163,184,.35); /* slate-300-ish */
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 16px;
+  line-height: 1.2;
+  outline: none;
+}
+#jobcards-card .select:focus,
+#jobcards-card .input:focus {
+  border-color: rgba(239,68,68,.6); /* red-500 vibe on focus */
+  box-shadow: 0 0 0 3px rgba(239,68,68,.12);
+}
+#jobcards-card .btn-primary {
+  background: #ef4444; color:#fff; border:none;
+  border-radius: 12px; padding: 10px 16px;
+}
+#jobcards-card .btn-secondary {
+  background: #f3f4f6; color:#111827; border:none;
+  border-radius: 12px; padding: 10px 16px;
+}
+#jobcards-card .list {
+  display: flex; flex-direction: column; gap: 8px;
+}
+#jobcards-card .jc-item {
+  background:#fff; border:1px solid rgba(148,163,184,.2);
+  border-radius:12px; padding:12px 14px;
+  display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
+}
+#jobcards-card .jc-left { display:flex; gap:16px; flex-wrap:wrap; }
+#jobcards-card .jc-chip {
+  background:#f1f5f9; border-radius:999px; padding:2px 10px; font-size:12px;
+}
+#jobcards-card .muted { color:#6b7280; }
+#jobcards-card .empty { padding:12px; color:#6b7280; }
+#jobcards-card .pager { display:flex; gap:12px; justify-content:flex-end; align-items:center; margin-top:8px; }
+

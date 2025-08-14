@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Icon Generator - BigRed PWA</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .icon-container { margin: 20px 0; }
+        canvas { border: 1px solid #ccc; margin: 10px; }
+        .download-btn { 
+            background: #dc2626; 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin: 5px; 
+        }
+        .download-btn:hover { background: #b91c1c; }
+    </style>
+</head>
+<body>
+    <h1>BigRed PWA Icon Generator</h1>
+    <p>Click on each icon to download it. Replace the placeholder files with these generated icons.</p>
+    
+    <div class="icon-container">
+        <h3>16x16 Icon</h3>
+        <canvas id="icon16" width="16" height="16"></canvas>
+        <button class="download-btn" onclick="downloadIcon('icon16', 'icon-16.png')">Download 16x16</button>
+    </div>
+    
+    <div class="icon-container">
+        <h3>32x32 Icon</h3>
+        <canvas id="icon32" width="32" height="32"></canvas>
+        <button class="download-btn" onclick="downloadIcon('icon32', 'icon-32.png')">Download 32x32</button>
+    </div>
+    
+    <div class="icon-container">
+        <h3>192x192 Icon</h3>
+        <canvas id="icon192" width="192" height="192"></canvas>
+        <button class="download-btn" onclick="downloadIcon('icon192', 'icon-192.png')">Download 192x192</button>
+    </div>
+    
+    <div class="icon-container">
+        <h3>512x512 Icon</h3>
+        <canvas id="icon512" width="512" height="512"></canvas>
+        <button class="download-btn" onclick="downloadIcon('icon512', 'icon-512.png')">Download 512x512</button>
+    </div>
+
+    <script>
+        function drawIcon(canvasId, size) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            // Очищаем canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Рисуем красный фон
+            ctx.fillStyle = '#dc2626';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Рисуем белый текст "BR"
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${size * 0.6}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('BR', size/2, size/2);
+            
+            // Добавляем небольшую тень
+            ctx.shadowColor = 'rgba(0,0,0,0.3)';
+            ctx.shadowBlur = size * 0.1;
+            ctx.shadowOffsetX = size * 0.05;
+            ctx.shadowOffsetY = size * 0.05;
+        }
+        
+        function downloadIcon(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        // Генерируем все иконки при загрузке
+        window.onload = function() {
+            drawIcon('icon16', 16);
+            drawIcon('icon32', 32);
+            drawIcon('icon192', 192);
+            drawIcon('icon512', 512);
+        };
+    </script>
+</body>
+</html>
+

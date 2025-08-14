@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Test - BigRed</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="PWA test page for BigRed Workshop">
+    <meta name="theme-color" content="#dc2626">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="BigRed PWA Test">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- PWA Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/icon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/icon-16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/public/icon-192.png">
+    <link rel="apple-touch-icon" href="/public/icon-192.png">
+    <link rel="manifest" href="/public/manifest.json">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #b91c1c; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .icon-preview {
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+        }
+        .icon-preview img {
+            border: 1px solid #ccc;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>BigRed PWA Test Page</h1>
+    
+    <div class="card">
+        <h2>PWA Status</h2>
+        <div id="pwaStatus" class="status info">Checking PWA status...</div>
+        <div id="swStatus" class="status info">Checking Service Worker...</div>
+        <div id="installStatus" class="status info">Checking install capability...</div>
+    </div>
+    
+    <div class="card">
+        <h2>PWA Icons</h2>
+        <p>These icons should be visible if PWA is working correctly:</p>
+        <div class="icon-preview">
+            <img src="/public/icon-16.png" alt="16x16" width="16" height="16">
+            <br>16x16
+        </div>
+        <div class="icon-preview">
+            <img src="/public/icon-32.png" alt="32x32" width="32" height="32">
+            <br>32x32
+        </div>
+        <div class="icon-preview">
+            <img src="/public/icon-192.png" alt="192x192" width="192" height="192">
+            <br>192x192
+        </div>
+        <div class="icon-preview">
+            <img src="/public/icon-512.png" alt="512x512" width="128" height="128">
+            <br>512x512
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2>PWA Actions</h2>
+        <button id="checkPWA">Check PWA Status</button>
+        <button id="checkSW">Check Service Worker</button>
+        <button id="clearCache">Clear Cache</button>
+        <button id="reloadSW">Reload Service Worker</button>
+    </div>
+    
+    <div class="card">
+        <h2>Navigation</h2>
+        <a href="/public/index.html"><button>Go to Main Page</button></a>
+        <a href="/public/guide.html"><button>Go to Guide Page</button></a>
+        <a href="/public/mechanic.html"><button>Go to Mechanic Page</button></a>
+        <a href="/public/icon-generator.html"><button>Generate Icons</button></a>
+    </div>
+    
+    <div class="card">
+        <h2>Console Log</h2>
+        <div id="consoleLog" style="background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; max-height: 200px; overflow-y: auto;"></div>
+    </div>
+
+    <!-- PWA Script -->
+    <script src="pwa.js"></script>
+    
+    <script>
+        // Перехватываем console.log для отображения в UI
+        const originalLog = console.log;
+        const originalError = console.error;
+        const consoleLogDiv = document.getElementById('consoleLog');
+        
+        function addToLog(message, type = 'log') {
+            const div = document.createElement('div');
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            div.style.color = type === 'error' ? 'red' : 'black';
+            consoleLogDiv.appendChild(div);
+            consoleLogDiv.scrollTop = consoleLogDiv.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToLog(args.join(' '));
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToLog(args.join(' '), 'error');
+        };
+        
+        // PWA Status Check
+        function checkPWAStatus() {
+            const pwaStatus = document.getElementById('pwaStatus');
+            const swStatus = document.getElementById('swStatus');
+            const installStatus = document.getElementById('installStatus');
+            
+            // Check Service Worker support
+            if ('serviceWorker' in navigator) {
+                swStatus.textContent = '✅ Service Worker supported';
+                swStatus.className = 'status success';
+            } else {
+                swStatus.textContent = '❌ Service Worker not supported';
+                swStatus.className = 'status error';
+            }
+            
+            // Check PWA install capability
+            if (window.deferredPrompt) {
+                installStatus.textContent = '✅ PWA install prompt available';
+                installStatus.className = 'status success';
+            } else {
+                installStatus.textContent = '❌ PWA install prompt not available';
+                installStatus.className = 'status warning';
+            }
+            
+            // Check if running as PWA
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                pwaStatus.textContent = '✅ Running as installed PWA';
+                pwaStatus.className = 'status success';
+            } else {
+                pwaStatus.textContent = 'ℹ️ Running in browser (not as PWA)';
+                pwaStatus.className = 'status info';
+            }
+        }
+        
+        // Event listeners
+        document.getElementById('checkPWA').addEventListener('click', checkPWAStatus);
+        document.getElementById('checkSW').addEventListener('click', () => {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    console.log('Service Worker registrations:', registrations);
+                });
+            }
+        });
+        document.getElementById('clearCache').addEventListener('click', () => {
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => {
+                        caches.delete(name);
+                        console.log('Deleted cache:', name);
+                    });
+                });
+            }
+        });
+        document.getElementById('reloadSW').addEventListener('click', () => {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    registrations.forEach(registration => {
+                        registration.unregister();
+                        console.log('Unregistered SW:', registration);
+                    });
+                    window.location.reload();
+                });
+            }
+        });
+        
+        // Initial check
+        window.addEventListener('load', () => {
+            setTimeout(checkPWAStatus, 1000);
+        });
+    </script>
+</body>
+</html>
+

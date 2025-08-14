@@ -1,0 +1,27 @@
+/* Admin-only card styling */
+#admin-app .admin-card {
+  position: relative;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.06);
+  margin-bottom: 12px;
+  padding: 16px;
+}
+#admin-app .admin-card::before {
+  content: "";
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 6px; border-radius: 16px 0 0 16px;
+  background: var(--prio-color, #ef4444);
+}
+#admin-app .admin-card.prio-low::before    { --prio-color: #22c55e; }
+#admin-app .admin-card.prio-medium::before { --prio-color: #f59e0b; }
+#admin-app .admin-card.prio-high::before   { --prio-color: #ef4444; }
+
+/* Admin filters */
+.admin-filters { margin: 0 0 12px; }
+.filters-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.filter-label { font-size: 12px; color: #475569; }
+.filter-select { height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid #e2e8f0; background: #fff; }
+.btn.subtle { height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid #e2e8f0; background: #fff; color: #0f172a; }
+.btn.subtle:hover { background: #f8fafc; }
+

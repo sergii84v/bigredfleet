@@ -1,0 +1,1320 @@
+/* Стили для BigRed Workshop */
+
+/* Сброс стилей и базовые настройки */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Скрытые элементы */
+.hidden {
+    display: none !important;
+}
+
+/* Заголовок */
+.header {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+
+.header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-info span {
+    font-weight: 500;
+}
+
+/* Основной контент */
+.main {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Элементы управления */
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.filters {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-select {
+    padding: 10px 15px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    background: white;
+    font-size: 14px;
+    min-width: 150px;
+    transition: border-color 0.3s ease;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #dc3545;
+}
+
+/* Кнопки */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+.btn-full {
+    width: 100%;
+}
+
+/* Таблица заявок */
+.table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.tickets-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.tickets-table th {
+    background: #f8f9fa;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.tickets-table td {
+    padding: 15px;
+    border-bottom: 1px solid #e9ecef;
+    vertical-align: top;
+}
+
+.tickets-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.ticket-title {
+    font-weight: 600;
+    color: #212529;
+}
+
+.ticket-description {
+    color: #6c757d;
+    max-width: 300px;
+    word-wrap: break-word;
+}
+
+/* Бейджи статусов */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-active {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-repair {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.status-ready {
+    background: #d4edda;
+    color: #155724;
+}
+
+/* Бейджи приоритетов */
+.priority-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.priority-low {
+    background: #e2e3e5;
+    color: #383d41;
+}
+
+.priority-medium {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.priority-high {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Состояния загрузки и ошибок */
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #6c757d;
+    font-size: 16px;
+}
+
+.error {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border: 1px solid #f5c6cb;
+}
+
+.no-data {
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+    padding: 40px;
+}
+
+/* Страница входа */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.login-card {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-card h1 {
+    text-align: center;
+    color: #dc3545;
+    margin-bottom: 10px;
+    font-size: 2rem;
+}
+
+.login-card h2 {
+    text-align: center;
+    color: #6c757d;
+    margin-bottom: 30px;
+    font-size: 1.2rem;
+    font-weight: 400;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.form-input {
+    padding: 12px 15px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #dc3545;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filters {
+        justify-content: center;
+    }
+    
+    .filter-select {
+        min-width: 120px;
+    }
+    
+    .tickets-table {
+        font-size: 14px;
+    }
+    
+    .tickets-table th,
+    .tickets-table td {
+        padding: 10px 8px;
+    }
+    
+    .ticket-description {
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-card {
+        margin: 20px;
+        padding: 30px 20px;
+    }
+    
+    .tickets-table {
+        font-size: 12px;
+    }
+    
+    .tickets-table th,
+    .tickets-table td {
+        padding: 8px 6px;
+    }
+}
+
+/* --- Mobile layout --- */
+@media (max-width: 640px) {
+  body { margin: 12px; }
+  h1 { font-size: 22px; }
+  .row { gap: 6px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead { display: none; }
+  tr { display: block; margin-bottom: 10px; border: 1px solid #eee; border-radius: 10px; overflow: hidden; }
+  td { display: grid; grid-template-columns: 110px 1fr; padding: 10px 12px; border-bottom: 1px solid #f3f3f3; }
+  td:last-child { border-bottom: 0; }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    opacity: .7;
+    margin-right: 8px;
+  }
+
+  button, select, input {
+    width: 100%;
+    min-height: 44px;
+    font-size: 16px;
+  }
+}
+
+/* Responsive table styles for mobile */
+@media (max-width: 768px) {
+  .tickets-table {
+    border: 0;
+  }
+
+  .tickets-table thead {
+    display: none;
+  }
+
+  .tickets-table tr {
+    display: block;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  .tickets-table td {
+    display: block;
+    text-align: right;
+    font-size: 14px;
+    border-bottom: 1px dotted #ccc;
+    padding: 0.5rem;
+    position: relative;
+  }
+
+  .tickets-table td:last-child {
+    border-bottom: 0;
+  }
+
+  .tickets-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 50%;
+    padding-left: 0.5rem;
+    font-weight: bold;
+    text-align: left;
+    color: #495057;
+  }
+
+  /* Adjust badge positioning for mobile */
+  .tickets-table .status-badge,
+  .tickets-table .priority-badge {
+    display: inline-block;
+    margin-left: auto;
+  }
+}
+
+.card { background:#fff; border:1px solid #eee; border-radius:12px; padding:16px; box-shadow: 0 4px 12px rgba(0,0,0,.04); }
+.controls { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+.controls > * { min-height:44px; }
+
+@media (max-width: 640px) {
+  .card { padding:12px; }
+  .controls { flex-direction: column; align-items: stretch; }
+}
+
+/* Затемнённый фон + размытие */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.55);   /* темнее */
+  backdrop-filter: blur(3px);            /* лёгкое размытие бэкграунда */
+  z-index: 1000;
+  opacity: 0;
+  animation: backdropFade .15s ease-out forwards;
+}
+
+@keyframes backdropFade {
+  to { opacity: 1; }
+}
+
+/* Коробка модалки — явно отделяем от фона */
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -48%) scale(.98);  /* лёгкая стартовая анимация */
+  z-index: 1001;
+  width: min(720px, calc(100% - 32px));
+  background: #ffffff;
+  border-radius: 16px;
+
+  /* Тонкая рамка/кольцо + сильная тень */
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow:
+    0 18px 48px rgba(0,0,0,0.28),
+    0 6px 18px rgba(0,0,0,0.12);
+
+  opacity: 0;
+  animation: modalPop .18s cubic-bezier(.2,.8,.2,1) forwards;
+  display: none;
+  pointer-events: auto;
+}
+
+@keyframes modalPop {
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.modal.show {
+  display: block;
+}
+
+.modal .modal-header {
+  padding: 14px 18px;
+  background: #f8fafc; /* слегка отличаем шапку */
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.modal .modal-body { 
+  padding: 18px; 
+}
+
+.modal .modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 12px 18px 18px;
+}
+
+/* Кнопки внизу */
+.modal .btn {
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal .btn-cancel {
+  background: #f1f5f9;
+  color: #0f172a;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.08) inset;
+}
+
+.modal .btn-cancel:hover {
+  background: #e2e8f0;
+  transform: translateY(-1px);
+}
+
+.modal .btn-primary {
+  background: #ef4444;
+  color: #fff;
+  box-shadow: 0 10px 18px rgba(239,68,68,0.22);
+}
+
+.modal .btn-primary:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 20px rgba(239,68,68,0.3);
+}
+
+/* Блокировка скролла теперь реализована через JavaScript */
+
+/* На всякий случай: контент и шапка НЕ должны иметь z-index выше 1000 */
+.top-bar, .card, .btn-row, .filters-card {
+  position: relative;
+  z-index: auto; /* сбросить возможные большие z-index */
+}
+
+/* Если у кнопки Add Ticket есть класс, который поднимает её над модалкой — убираем */
+#addTicketBtn {
+  position: relative;
+  z-index: auto;
+}
+.modal__form { display: grid; gap: 10px; margin: 10px 0 14px; }
+.modal__form input, .modal__form select { min-height: 44px; font-size: 16px; }
+.modal__actions { display: flex; gap: 10px; justify-content: flex-end; }
+button.primary { background: #cf2b2b; color: #fff; border: none; border-radius: 8px; padding: 10px 14px; }
+button.ghost { background: #eee; border: none; border-radius: 8px; padding: 10px 14px; }
+
+/* layout */
+.container { max-width: 980px; margin: 0 auto; padding: 12px; }
+.toolbar { display:flex; gap:12px; align-items:center; justify-content:space-between; margin:12px 0; flex-wrap:wrap; }
+.filters { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.card { background:#fff; border:1px solid #eee; border-radius:12px; padding:12px; box-shadow:0 4px 12px rgba(0,0,0,.04); }
+
+html, body { overflow-x: hidden; }  /* kill horizontal scroll */
+table { width:100%; border-collapse:collapse; }
+
+
+.modal__form { display:grid; gap:10px; margin:10px 0 14px; }
+.modal__form input, .modal__form select, .filters select, .filters button, .toolbar .primary { min-height:44px; font-size:16px; }
+.modal__actions { display:flex; gap:10px; justify-content:flex-end; }
+button.primary { background:#cf2b2b; color:#fff; border:none; border-radius:8px; padding:10px 14px; }
+button.ghost { background:#eee; border:none; border-radius:8px; padding:10px 14px; }
+
+/* mobile */
+@media (max-width: 640px) {
+  .toolbar { flex-direction:column; align-items:stretch; }
+  .filters { flex-direction:column; align-items:stretch; }
+  thead { display:none; }
+  tr { display:block; margin-bottom:10px; border:1px solid #eee; border-radius:10px; overflow:hidden; }
+  td { display:grid; grid-template-columns:120px 1fr; padding:10px 12px; border-bottom:1px solid #f3f3f3; }
+  td:last-child { border-bottom:0; }
+  td::before { content: attr(data-label); font-weight:600; opacity:.7; margin-right:8px; }
+}
+
+/* ticket cards */
+tbody tr.ticket-row {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.05);
+  overflow: hidden;
+}
+
+/* чуть воздуха между карточками */
+tbody tr.ticket-row + tr.ticket-row { margin-top: 12px; }
+
+/* аккуратные ячейки */
+tbody tr.ticket-row td { padding: 10px 12px; }
+
+/* бейджи приоритета */
+.badge { display:inline-block; padding:4px 8px; border-radius:999px; font-weight:600; font-size:12px; }
+.badge.low    { background:#e8f7ee; color:#1a7f3b; }
+.badge.medium { background:#fff5d6; color:#8a6d00; }
+.badge.high   { background:#ffe4e4; color:#b21e1e; }
+
+/* Отключаем border-left на строках таблицы */
+@media (min-width: 641px) {
+  tr.ticket-row.pri-low    { border-left: none; }
+  tr.ticket-row.pri-medium { border-left: none; }
+  tr.ticket-row.pri-high   { border-left: none; }
+}
+
+/* мобильный вид уже карточками — добавим отступы */
+@media (max-width: 640px) {
+  tr.ticket-row { margin-bottom: 12px; }
+}
+
+/* toast */
+.toast-wrap {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  display: grid;
+  gap: 8px;
+  z-index: 9999;
+}
+.toast {
+  background: #1f2937; color:#fff; padding:10px 14px;
+  border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  opacity: 0; transform: translateY(10px);
+  animation: toast-in .2s ease forwards, toast-out .2s ease 4.2s forwards;
+}
+.toast--success { background:#0f766e; }
+.toast--info    { background:#334155; }
+@keyframes toast-in { to { opacity:1; transform:translateY(0);} }
+@keyframes toast-out { to { opacity:0; transform:translateY(10px);} }
+
+.controls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.controls select { min-height:36px; font-size:14px; }
+.controls button { min-height:36px; font-size:13px; padding:4px 10px; border-radius:8px; border:1px solid #e5e7eb; background:#f8fafc; }
+.controls button[disabled] { opacity:.5; pointer-events:none; }
+
+.row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.row .grow { flex:1 1 auto; }
+.btn { min-height:36px; font-size:13px; padding:6px 10px; border-radius:8px; border:1px solid #e5e7eb; background:#f8fafc; }
+
+/* Переопределяем глобальные стили кнопок для карточек тикетов */
+.ticket-card .btn {
+  background: initial !important;
+  border: none !important;
+  color: initial !important;
+}
+.btn[disabled]{ opacity:.5; pointer-events:none; }
+
+/* хедер карточки: заголовок слева, бейдж приоритета справа */
+.card-head { display:flex; justify-content:space-between; align-items:center; }
+.card-title { font-weight:600; }
+.card-subtle { color:#6b7280; font-size:13px; }
+
+.row.center { justify-content: center; }
+.btn.w120 { min-width:120px; }
+
+/* Tailwind CDN inlines fine; this is plain CSS for select arrow */
+.tw-select{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 8l4 4 4-4' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .6rem center;
+  background-size: 18px 18px;
+  padding-right: 2.2rem; /* место под стрелку */
+  font-size: 0.95rem;
+  line-height: 1.25rem;
+  min-height: 42px;
+}
+
+/* Top bar styles */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: #ef4444;
+  border-radius: 16px;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(239,68,68,0.25);
+  margin: 12px 12px 0;
+  gap: 12px;
+}
+
+.role-name {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* расстояние между ролью и именем */
+}
+
+.role-name h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  white-space: nowrap;
+}
+
+.user-name {
+  padding: 4px 10px;
+  background: white;
+  border-radius: 20px;
+  color: #e53935; /* красный под цвет фона */
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+/* Кнопка Logout с фиксированной шириной */
+.btn-logout {
+  width: 100px;                    /* фиксированная ширина */
+  padding: 8px 12px;
+  background: white;
+  border-radius: 10px;
+  color: #e53935;
+  font-weight: bold;
+  white-space: nowrap;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  transition: transform .15s ease, box-shadow .2s ease;
+  flex-shrink: 0;                  /* не сжимается */
+}
+
+.btn-logout:hover { 
+  transform: translateY(-1px); 
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15); 
+}
+
+.btn-logout:active { 
+  transform: translateY(0); 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+}
+
+/* Компактный режим для мобильных устройств */
+@media (max-width: 480px) {
+  .top-bar {
+    flex-wrap: nowrap !important;  /* запрещаем перенос */
+    gap: 6px;                       /* уменьшаем промежутки */
+  }
+
+  .role-name h1 {
+    font-size: 18px;                /* чуть меньше текст роли */
+  }
+
+  .user-name {
+    font-size: 14px;                /* чуть меньше имя */
+    padding: 3px 8px;               /* компактный бейдж */
+  }
+
+  .btn-logout {
+    width: 80px;                     /* меньшая ширина на мобильных */
+    padding: 6px 8px;                /* компактная кнопка */
+    font-size: 14px;
+    white-space: nowrap;             /* не переносить Logout */
+  }
+}
+
+/* Card styles */
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-top: 24px;
+  position: relative;
+  overflow: hidden;
+  padding: 16px;
+  border: 1px solid #f3f4f6;
+}
+
+/* Отключаем любые полосы у контейнеров (подложек) */
+.tickets-section::before,
+.cards::before,
+.card-stack::before,
+.panel::before,
+.section::before,
+.container-with-accent::before {
+  content: none !important;
+}
+
+/* На всякий, снимаем левые бордеры/инсет-тени у контейнеров */
+.tickets-section,
+.cards,
+.card-stack,
+.panel,
+.section,
+.container-with-accent {
+  border-left: none !important;
+  box-shadow: none !important;
+}
+
+.card h2,
+.card h3 {
+  background: #f9fafb;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 600;
+  margin: -16px -16px 16px -16px;
+  color: #111827;
+}
+
+/* Карточки */
+.card {
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin-top: 32px;
+  overflow: hidden;
+}
+
+/* Карточка тикета */
+.ticket-card {
+  position: relative;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(16,24,40,.08);
+  overflow: hidden;
+}
+
+/* Левая полоска */
+.ticket-card::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 6px;
+  background: var(--prio-color, #ef4444); /* по умолчанию красный */
+}
+
+/* Цвет от приоритета: либо классом, либо data-атрибутом */
+.ticket-card.prio-low::before    { --prio-color: #22c55e; } /* зелёный */
+.ticket-card.prio-medium::before { --prio-color: #f59e0b; } /* янтарный */
+.ticket-card.prio-high::before   { --prio-color: #ef4444; } /* красный */
+
+/* Если рендерим data-priority вместо классов */
+.ticket-card[data-priority="low"]::before    { --prio-color: #22c55e; }
+.ticket-card[data-priority="medium"]::before { --prio-color: #f59e0b; }
+.ticket-card[data-priority="high"]::before   { --prio-color: #ef4444; }
+
+/* Мини-оверрайд, если где-то залип pointer-events */
+.ticket-card,
+.ticket-card * {
+  pointer-events: auto;
+}
+
+/* Стили для кнопок в карточках тикетов - ПРИНУДИТЕЛЬНО */
+.ticket-card .btn,
+.card .ticket-card .btn {
+  min-height: 36px !important;
+  font-size: 13px !important;
+  padding: 8px 16px !important;
+  border-radius: 8px !important;
+  border: none !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: initial !important;
+  color: initial !important;
+}
+
+/* Кнопка Start - синяя */
+.ticket-card .btn-primary,
+.card .ticket-card .btn-primary {
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2) !important;
+}
+
+.ticket-card .btn-primary:hover,
+.card .ticket-card .btn-primary:hover {
+  background: #2563eb !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3) !important;
+}
+
+.ticket-card .btn-primary:active,
+.card .ticket-card .btn-primary:active {
+  background: #1d4ed8 !important;
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2) !important;
+}
+
+.ticket-card .btn-primary:focus,
+.card .ticket-card .btn-primary:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3) !important;
+}
+
+/* Кнопка Done - зеленая */
+.ticket-card .btn-success,
+.card .ticket-card .btn-success {
+  background: #10b981 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2) !important;
+}
+
+.ticket-card .btn-success:hover,
+.card .ticket-card .btn-success:hover {
+  background: #059669 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3) !important;
+}
+
+.ticket-card .btn-success:active,
+.card .ticket-card .btn-success:active {
+  background: #047857 !important;
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2) !important;
+}
+
+.ticket-card .btn-success:focus,
+.card .ticket-card .btn-success:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3) !important;
+}
+
+/* Кнопка Assign — контрастная, с красной рамкой/текстом */
+.ticket-card .btn-secondary,
+.card .ticket-card .btn-secondary {
+  background: #ffffff !important;
+  color: #ef4444 !important;
+  border: 1px solid #ef4444 !important;
+  box-shadow: 0 1px 2px rgba(239, 68, 68, 0.12) !important;
+}
+
+.ticket-card .btn-secondary:hover,
+.card .ticket-card .btn-secondary:hover {
+  background: #fff1f2 !important; /* rose-50 */
+}
+
+.ticket-card .btn-secondary:active,
+.card .ticket-card .btn-secondary:active {
+  background: #ffe4e6 !important; /* rose-100 */
+}
+
+.ticket-card .btn-secondary:focus,
+.card .ticket-card .btn-secondary:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.28) !important;
+}
+
+/* Отключенные кнопки */
+.ticket-card .btn:disabled,
+.ticket-card .btn[disabled],
+.card .ticket-card .btn:disabled,
+.card .ticket-card .btn[disabled] {
+  background: #e5e7eb !important;
+  color: #9ca3af !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  pointer-events: none !important;
+}
+
+.card-header {
+  background: #f9fafb;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 700;
+  color: #111827;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 16px;
+}
+
+@media (min-width: 768px) {
+  .filters-grid { 
+    grid-template-columns: 1fr 1fr; 
+  }
+}
+
+.filter-item { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 8px; 
+}
+
+.filter-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111827; /* slate-900 */
+}
+
+/* Нормальный вид select */
+.select-control {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db; /* gray-300 */
+  border-radius: 12px;
+  background: #fff;
+  color: #111827;
+  font-size: 1rem;
+  line-height: 1.4;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.select-control:focus {
+  outline: none;
+  border-color: #ef4444;             /* фирменный красный */
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.2);
+}
+
+.card button {
+  display: block;
+  margin: 0 auto;
+}
+
+/* Red buttons in cards */
+.card .bg-red-500,
+.card .bg-red-600,
+.card .hover\:bg-red-600:hover {
+  background-color: #ef4444 !important;
+}
+
+.card .hover\:bg-red-600:hover {
+  background-color: #dc2626 !important;
+}
+
+/* Контейнер кнопки */
+.btn-row {
+  display: flex;
+  justify-content: center;
+  padding: 12px 16px;
+  margin-top: 12px;
+}
+
+/* Явные стили для кнопки "Add Ticket" */
+.btn-row #addTicketBtn,
+button#addTicketBtn.primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  max-width: 680px;
+
+  background-color: #ef4444 !important;  /* фирменный красный */
+  color: #ffffff !important;
+  border: none !important;
+  outline: none;
+  appearance: none;
+
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
+
+  padding: 14px 18px;
+  border-radius: 12px;
+
+  box-shadow: 0 8px 18px rgba(239,68,68,0.25);
+  cursor: pointer;
+
+  position: relative;
+  z-index: 1; /* на случай перекрытий */
+  transition: transform .15s ease, box-shadow .2s ease, background-color .2s ease;
+}
+
+.btn-row #addTicketBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 22px rgba(239,68,68,0.35);
+}
+
+.btn-row #addTicketBtn:active {
+  transform: translateY(0);
+  box-shadow: 0 8px 18px rgba(239,68,68,0.25);
+}
+
+.btn-row #addTicketBtn:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+/* === Dealer visit section styles === */
+
+/* Заголовки секций */
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.sub-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.75rem;
+}
+
+/* Метки полей */
+.lbl {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+/* Селекторы */
+.select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background: #ffffff;
+  color: #111827;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.select:focus {
+  outline: none;
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* Поля ввода */
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background: #ffffff;
+  color: #111827;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.input::placeholder {
+  color: #9ca3af;
+}
+
+/* Кнопки */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  min-height: 2.75rem;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #dc2626;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active:not(:disabled) {
+  background-color: #b91c1c;
+  transform: translateY(0);
+}
+
+.btn-outline {
+  background-color: #ffffff;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline:active:not(:disabled) {
+  background-color: #f3f4f6;
+}
+
+.btn-secondary {
+  background-color: #6b7280;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #4b5563;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active:not(:disabled) {
+  background-color: #374151;
+  transform: translateY(0);
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 640px) {
+  .section-title {
+    font-size: 1.125rem;
+  }
+  
+  .sub-title {
+    font-size: 0.875rem;
+  }
+  
+  .lbl {
+    font-size: 0.75rem;
+  }
+  
+  .select,
+  .input {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.75rem;
+  }
+  
+  .btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.75rem;
+    min-height: 2.5rem;
+  }
+}
+
+/* === Dealer visits list styles === */
+
+.item-row {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.15s ease-in-out;
+}
+
+.item-row:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.item-row .font-semibold {
+  font-weight: 600;
+  color: #111827;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.item-row .text-sm {
+  color: #ffffff;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.item-row .text-xs {
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
+.item-row .text-gray-500 {
+  color: #6b7280 !important;
+}
+
+.item-row .btn {
+  flex-shrink: 0;
+  margin-left: auto;
+}

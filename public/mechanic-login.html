@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mechanic Login — BigRed</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-red-500 text-white">
+  <div class="bg-red-500 text-white flex flex-col items-center justify-center w-full max-w-md px-6 py-8">
+    <h1 class="text-3xl font-bold mb-2">Mechanic login</h1>
+    <p class="text-lg opacity-90 mb-8">Enter your credentials to continue</p>
+
+    <div class="w-full space-y-4">
+      <div>
+        <label class="text-sm opacity-90 mb-2 block">Your name</label>
+        <select id="mechName" required 
+                class="w-full px-4 py-3 rounded-xl text-gray-800 bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-white/50"></select>
+      </div>
+
+      <div>
+        <label class="text-sm opacity-90 mb-2 block">PIN</label>
+        <input id="mechPin" required inputmode="numeric" pattern="[0-9]*" maxlength="8"
+               class="w-full px-4 py-3 rounded-xl text-gray-800 bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-white/50 tracking-widest"
+               placeholder="••••••" />
+      </div>
+
+      <button id="mechLoginBtn"
+              class="w-full rounded-xl bg-white text-red-600 font-semibold px-6 py-4 shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50">
+        Sign in
+      </button>
+
+      <div id="loginMsg" class="text-sm text-white min-h-[1.25rem]"></div>
+    </div>
+
+    <div class="mt-6 text-sm opacity-90">
+      Guide? <a class="text-white hover:underline" href="./guide-login.html">Go to guide login</a>
+    </div>
+  </div>
+
+  <script type="module" src="./supabase.js"></script>
+  <script type="module" src="./api.js"></script>
+  <script type="module" src="./mechanic-login.js"></script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin • BigRed Workshop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body class="min-h-screen bg-gray-50 text-slate-900">
+  <div id="toasts" class="toast-container" aria-live="assertive" aria-atomic="true"></div>
+  <div id="admin-app" class="container mx-auto px-3 py-3">
+    <!-- Top bar -->
+    <div class="flex items-center justify-between px-4 py-3 rounded-2xl bg-red-500 text-white shadow-lg">
+      <div class="flex items-center gap-2">
+        <h1 id="roleTitle" class="text-xl font-extrabold">Admin</h1>
+        <span id="userNameBadge" class="px-3 py-1 rounded-full bg-white text-red-600 font-semibold">—</span>
+      </div>
+      <button id="logoutBtn" type="button" class="px-4 py-2 rounded-lg bg-white text-red-600 font-bold hover:shadow-md transition">Logout</button>
+    </div>
+
+    <!-- Content -->
+    <div id="admin-sections" class="admin-stack mt-4">
+      <section id="tickets-card" class="card">
+        <div class="card-title">Tickets</div>
+
+        <div id="tickets-filters" class="filters">
+          <div class="field">
+            <label for="tickets-status">Status</label>
+            <select id="tickets-status" class="select">
+              <option value="">All statuses</option>
+              <option value="open">open</option>
+              <option value="in_progress">in_progress</option>
+              <option value="done">done</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="tickets-priority">Priority</label>
+            <select id="tickets-priority" class="select">
+              <option value="">All priorities</option>
+              <option value="low">low</option>
+              <option value="medium">medium</option>
+              <option value="high">high</option>
+            </select>
+          </div>
+
+          <div class="actions">
+            <button id="tickets-reset" class="btn btn-reset" type="button">Reset</button>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex items-center gap-2 mb-2">
+          <button id="admRefresh" class="px-3 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600">Refresh</button>
+          <div class="flex items-center gap-2 ml-auto">
+            <button id="admPrev" class="px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200">Prev</button>
+            <button id="admNext" class="px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200">Next</button>
+            <span id="admPage" class="text-sm text-slate-600 ml-2">Page 1</span>
+          </div>
+        </div>
+        <!-- Cards on mobile, table on desktop -->
+        <div id="admCards" class="block lg:hidden p-3"></div>
+        <div class="hidden lg:block overflow-auto">
+          <table id="admTickets" class="min-w-full text-sm">
+            <thead class="bg-slate-50 sticky top-0 z-10">
+              <tr class="text-left text-slate-600">
+                <th id="thCreated" class="px-4 py-2 whitespace-nowrap cursor-pointer select-none">Created</th>
+                <th class="px-4 py-2 whitespace-nowrap">Buggy</th>
+                <th class="px-4 py-2">Description</th>
+                <th class="px-4 py-2 whitespace-nowrap">Status</th>
+                <th id="thPriority" class="px-4 py-2 whitespace-nowrap cursor-pointer select-none">Priority</th>
+                <th class="px-4 py-2 whitespace-nowrap">Assignee</th>
+                <th class="px-4 py-2 whitespace-nowrap">Started</th>
+                <th class="px-4 py-2 whitespace-nowrap">Completed</th>
+                <th class="px-4 py-2 whitespace-nowrap">Created by</th>
+                <th class="px-4 py-2 whitespace-nowrap">Location</th>
+                <th class="px-4 py-2 whitespace-nowrap">Hours</th>
+                <th class="px-4 py-2 whitespace-nowrap">Km</th>
+                <th class="px-4 py-2 whitespace-nowrap">Job done</th>
+                <th class="px-4 py-2 whitespace-nowrap">Job status</th>
+                <th class="px-4 py-2 whitespace-nowrap">Test drive</th>
+                <th class="px-4 py-2 whitespace-nowrap">Parts</th>
+                <th class="px-4 py-2 whitespace-nowrap">Notes</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </section>
+
+    <!-- Buggy Hours -->
+    <section id="hours-card" class="card">
+      <div class="card-title">Buggy Hours</div>
+
+      <form id="hours-filters" class="filter-bar" onsubmit="return false;">
+        <label class="filter-label" for="hours-buggy">Buggy</label>
+        <select id="hours-buggy" class="filter-select">
+          <option value="">All buggies</option>
+        </select>
+
+        <label class="filter-label" for="hours-from">From</label>
+        <input id="hours-from" type="date" class="filter-input" placeholder="dd/mm/yyyy" />
+
+        <label class="filter-label" for="hours-to">To</label>
+        <input id="hours-to" type="date" class="filter-input" placeholder="dd/mm/yyyy" />
+
+        <button type="button" id="hours-apply" class="btn btn-primary">Apply</button>
+        <button type="button" id="hours-reset" class="btn btn-soft">Reset</button>
+      </form>
+
+      <div id="hours-results" class="mt-4">
+        <div class="overflow-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+          <table id="hours-table" class="table hours-table min-w-full text-sm">
+            <thead class="bg-slate-50 text-slate-500">
+              <tr>
+                <th class="text-left px-3 py-2">Date</th>
+                <th class="text-left px-3 py-2">Time of tour</th>
+                <th class="text-left px-3 py-2">Hours</th>
+              </tr>
+            </thead>
+            <tbody id="hours-tbody"></tbody>
+            <tfoot>
+              <tr>
+                <td class="text-muted px-3 py-2" colspan="2">Total</td>
+                <td class="hours-total-cell px-3 py-2" id="hours-total">0</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- Mobile total badge -->
+      <div class="hours-total-mobile" id="hours-total-mobile" aria-live="polite"></div>
+      </section>
+
+        <!-- Guide Job Cards -->
+  <section id="jobcards-card" class="card" aria-label="Guide Job Cards">
+    <div class="card-header">
+      <h2 class="card-title">Guide Job Cards</h2>
+        </div>
+
+        <div class="filters-row" id="jobcards-filters">
+          <label class="filter">
+            <span>Buggy</span>
+            <select id="jobcards-buggy" class="select">
+              <option value="">All buggies</option>
+            </select>
+          </label>
+          <label class="filter">
+            <span>From</span>
+            <input id="jobcards-from" type="date" class="input" />
+          </label>
+          <label class="filter">
+            <span>To</span>
+            <input id="jobcards-to" type="date" class="input" />
+          </label>
+          <button id="jobcards-apply" class="btn btn-primary" type="button">Apply</button>
+          <button id="jobcards-reset" class="btn btn-secondary" type="button">Reset</button>
+        </div>
+
+        <!-- LIST CONTAINER -->
+        <ul id="jobcards-list" class="jobcards-list"></ul>
+
+        <div class="pager" id="jobcards-pager">
+          <button id="jobcards-prev" class="btn btn-secondary" type="button">Prev</button>
+          <span id="jobcards-page" class="muted">Page 1</span>
+          <button id="jobcards-next" class="btn btn-secondary" type="button">Next</button>
+        </div>
+      </section>
+
+      <!-- Buggies -->
+      <section id="buggies-card" class="card">
+        <div class="card-title flex items-center justify-between">
+          <span>Buggies</span>
+          <button id="btn-open-add-buggy" type="button" class="btn btn-primary">Add Buggy</button>
+        </div>
+        <div class="buggies-head">
+          <div class="buggies-title">Buggies <span id="buggies-count" class="badge">0</span></div>
+        </div>
+        <div id="buggies-list" class="buggies-list"></div>
+        <div id="buggies-empty" class="muted hidden">No buggies yet. Use “Add Buggy”.</div>
+        <div id="buggies-count-wrap" class="muted hidden">Total: <span id="buggies-count">0</span></div>
+    </section>
+
+    <!-- Dealer visits (admin) -->
+    <section id="dealer-visits-card" class="card mt-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="title">Dealer visits</h2>
+
+        <div class="flex items-center gap-3">
+          <label for="dealer-visits-filter" class="text-sm text-slate-600">Show</label>
+          <select id="dealer-visits-filter" class="select">
+            <option value="active">Active</option>
+            <option value="returned">Returned</option>
+            <option value="all">All</option>
+          </select>
+
+          <button id="dealer-visits-refresh" class="btn btn-outline">Refresh</button>
+        </div>
+      </div>
+
+      <div id="dealer-visits-list" class="space-y-3">
+        <!-- will be filled by admin.js -->
+        <div class="text-slate-400 text-sm">Loading…</div>
+      </div>
+    </section>
+  </div>
+
+  <div id="toastWrap" class="toast-wrap"></div>
+
+  <!-- Add Buggy Modal (centered, responsive) -->
+  <div id="admin-add-buggy-modal" class="admin-modal hidden" role="dialog" aria-modal="true" aria-labelledby="addBuggyTitle">
+    <div class="admin-modal__backdrop"></div>
+    <div class="admin-modal__panel" role="document">
+      <div class="text-lg font-bold mb-3" id="addBuggyTitle">Add Buggy</div>
+      <form id="addBuggyForm" autocomplete="off">
+        <div class="space-y-3">
+          <label class="block">
+            <span class="block text-sm text-slate-600 mb-1">Number</span>
+            <input id="buggy-number" name="number" type="text" inputmode="numeric" autocomplete="off" required placeholder="e.g. 113" class="w-full px-3 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-red-200" />
+            <p id="buggy-number-error" class="field-error hidden">Number is required</p>
+          </label>
+          <label class="block">
+            <span class="block text-sm text-slate-600 mb-1">Model (optional)</span>
+            <input id="buggy-model" name="model" type="text" autocomplete="off" placeholder="e.g. Can-Am Maverick" class="w-full px-3 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-red-200" />
+          </label>
+        </div>
+        <div class="mt-5 flex items-center justify-end gap-2">
+          <button id="btn-cancel-add-buggy" type="button" class="btn btn-soft">Cancel</button>
+          <button id="btn-create-buggy" type="button" class="btn btn-primary">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <style>
+    .admin-stack { display:flex; flex-direction:column; gap:18px; }
+  </style>
+  <script type="module" src="./admin.js"></script>
+</body>
+</html>
+
+

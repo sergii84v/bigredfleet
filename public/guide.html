@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guide — BigRed Workshop</title>
+  
+  <!-- PWA Meta Tags -->
+  <meta name="description" content="Guide interface for BigRed Workshop service management">
+  <meta name="theme-color" content="#dc2626">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="BigRed Guide">
+  <meta name="mobile-web-app-capable" content="yes">
+  
+  <!-- PWA Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <div class="p-4 md:p-6">
+    <div class="top-bar">
+      <div class="role-name">
+        <h1 id="roleTitle">Guide</h1>
+        <span id="userNameBadge" class="user-name">—</span>
+      </div>
+      <button id="logoutBtn" class="btn-logout" type="button">Logout</button>
+    </div>
+
+    <!-- Card 1: Log hours -->
+    <section class="card">
+      <h2>Log hours</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="text-sm font-medium text-gray-700 mb-2 block">Buggy</label>
+          <select id="hoursBuggy" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-gray-800 shadow-sm"></select>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-medium text-gray-700 mb-2 block">Hours (odometer now)</label>
+            <input id="hoursVal" type="number" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-gray-800 shadow-sm" placeholder="e.g. 128" />
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-700 mb-2 block">Date</label>
+            <input id="hoursDate" type="date" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-gray-800 shadow-sm" />
+          </div>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-700 mb-2 block">Time of tour</label>
+          <select id="hoursTime" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-gray-800 shadow-sm"></select>
+        </div>
+
+        <button id="saveHours" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold px-5 py-3 rounded-xl shadow-lg transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-red-300">Save hours</button>
+        <div id="recentHours" class="text-sm text-gray-600"></div>
+      </div>
+    </section>
+
+    <!-- Quick Job Card (UI only) -->
+    <section id="job-card" class="card bg-white rounded-2xl shadow p-4 md:p-6 mt-6">
+      <h2 class="text-lg md:text-xl font-semibold mb-4 md:mb-6 text-slate-800">Quick job card</h2>
+
+      <div class="space-y-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-4">
+        <!-- Buggy -->
+        <div class="space-y-2">
+          <label for="jc-buggy" class="block text-sm font-medium text-slate-700 mb-2">Buggy</label>
+          <select id="jc-buggy" class="w-full rounded-xl border border-slate-200 px-4 py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-red-300 focus:border-red-400 bg-white shadow-sm">
+            <option value="">Select buggy…</option>
+          </select>
+        </div>
+
+        <!-- Date -->
+        <div class="space-y-2">
+          <label for="jc-date" class="block text-sm font-medium text-slate-700 mb-2">Date</label>
+          <input id="jc-date" type="date" class="w-full rounded-xl border border-slate-200 px-4 py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-red-300 focus:border-red-400 bg-white shadow-sm" />
+        </div>
+
+        <!-- Time (step 30 min) -->
+        <div class="space-y-2">
+          <label for="jc-time" class="block text-sm font-medium text-slate-700 mb-2">Time of tour</label>
+          <select id="jc-time" class="w-full rounded-xl border border-slate-200 px-4 py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-red-300 focus:border-red-400 bg-white shadow-sm"></select>
+        </div>
+
+        <!-- Location -->
+        <div class="space-y-2">
+          <label for="jc-location" class="block text-sm font-medium text-slate-700 mb-2">Location</label>
+          <select id="jc-location" class="w-full rounded-xl border border-slate-200 px-4 py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-red-300 focus:border-red-400 bg-white shadow-sm">
+            <option value="">Select location…</option>
+            <option value="Desert">Desert</option>
+            <option value="Base">Base</option>
+          </select>
+        </div>
+
+        <!-- Work done -->
+        <div class="space-y-2 md:col-span-2">
+          <label for="jc-issue" class="block text-sm font-medium text-slate-700 mb-2">
+            Work done <span class="text-slate-400 text-xs">(optional)</span>
+          </label>
+          <input id="jc-issue" type="text"
+                 placeholder="e.g. Belt change, oil topped up"
+                 class="w-full rounded-xl border border-slate-200 px-4 py-3.5 text-base outline-none focus:ring-2 focus:ring-rose-400 focus:border-rose-400 bg-white shadow-sm"
+                 autocomplete="off">
+        </div>
+
+        <!-- Odometer hours -->
+        <div class="space-y-2">
+          <label for="jc-hours" class="block text-sm font-medium text-slate-700 mb-2">Hours (odometer)</label>
+          <input id="jc-hours" type="number" min="0" step="1" placeholder="e.g. 128" 
+                 class="w-full rounded-xl border border-slate-200 px-4 py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-red-300 focus:border-red-400 bg-white shadow-sm"
+                 inputmode="numeric" pattern="[0-9]*"/>
+        </div>
+
+        <!-- KM -->
+        <div class="space-y-2">
+          <label for="jc-km" class="block text-sm font-medium text-slate-700 mb-2">KM</label>
+          <input id="jc-km" type="number" min="0" step="1" placeholder="e.g. 3500" 
+                 class="w-full rounded-xl border border-slate-200 px-4 py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-red-300 focus:border-red-400 bg-white shadow-sm"
+                 inputmode="numeric" pattern="[0-9]*"/>
+        </div>
+      </div>
+
+      <div class="mt-6 md:mt-8 space-y-3">
+        <button id="jc-save" class="w-full rounded-xl bg-red-500 hover:bg-red-600 text-white px-6 py-4 font-semibold shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-base" disabled>
+          Save job card
+        </button>
+        <span id="jc-hint" class="block text-center text-sm text-slate-500 hidden">UI-only: will just log payload to console</span>
+      </div>
+    </section>
+
+
+
+    <!-- Card 3: Create ticket -->
+    <section class="card">
+      <h2>Create ticket</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="text-sm font-medium text-gray-700 mb-2 block">Buggy</label>
+          <select id="ctBuggy" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-gray-800 shadow-sm"></select>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-700 mb-2 block">Priority</label>
+          <select id="ctPriority" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-gray-800 shadow-sm">
+            <option value="low">low</option>
+            <option value="medium" selected>medium</option>
+            <option value="high">high</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-700 mb-2 block">Description</label>
+          <textarea id="ctDesc" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-gray-800 shadow-sm" rows="2" placeholder="Describe the issue"></textarea>
+        </div>
+        <button id="createTicket" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold px-5 py-3 rounded-xl shadow-lg transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-red-300">Create</button>
+      </div>
+    </section>
+
+    <!-- My open tickets -->
+    <section class="card">
+      <h2>My open tickets</h2>
+      <div id="myTickets" class="space-y-3 text-sm"></div>
+    </section>
+  </div>
+
+  <!-- Supabase client with persistent session -->
+  <script type="module" src="/public/supabase.js"></script>
+  <script type="module" src="./supabase.js"></script>
+  <script type="module" src="./api.js"></script>
+  <script type="module" src="./guide.js"></script>
+  
+  <!-- PWA Scripts -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(r => console.log('[PWA] SW registered', r.scope))
+        .catch(err => console.error('[PWA] SW register error', err));
+    }
+  </script>
+  <script src="/pwa-install.js"></script>
+  </body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Icons - BigRed PWA</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
+        .icon-preview { display: inline-block; margin: 10px; text-align: center; }
+        .icon-preview canvas { border: 1px solid #ccc; margin-bottom: 5px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; font-weight: bold; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button { background: #dc2626; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #b91c1c; }
+        .download-links { margin: 20px 0; }
+        .download-links a { display: inline-block; margin: 5px; padding: 8px 16px; background: #28a745; color: white; text-decoration: none; border-radius: 5px; }
+        .download-links a:hover { background: #218838; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BigRed PWA Icon Generator</h1>
+        <p>This page will generate PNG icons for your PWA. Click "Generate All Icons" to create them.</p>
+        
+        <div id="status" class="status info">Ready to generate icons...</div>
+        
+        <button id="generateBtn">Generate All Icons</button>
+        <button id="downloadAllBtn" style="display: none;">Download All Icons</button>
+        
+        <div id="iconPreviews"></div>
+        
+        <div id="downloadLinks" class="download-links" style="display: none;">
+            <h3>Download Generated Icons:</h3>
+            <a href="#" id="download16">Download icon-16.png</a>
+            <a href="#" id="download32">Download icon-32.png</a>
+            <a href="#" id="download192">Download icon-192.png</a>
+            <a href="#" id="download512">Download icon-512.png</a>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 5px;">
+            <h3>Instructions:</h3>
+            <ol>
+                <li>Click "Generate All Icons" to create the PNG files</li>
+                <li>Download each icon using the links above</li>
+                <li>Replace the placeholder files in your project with these PNG files</li>
+                <li>Refresh your PWA test page to see the changes</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        const iconSizes = [16, 32, 192, 512];
+        let generatedIcons = {};
+        
+        function drawIcon(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            // Очищаем canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Рисуем красный фон с градиентом
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#dc2626');
+            gradient.addColorStop(1, '#b91c1c');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Добавляем тень
+            ctx.shadowColor = 'rgba(0,0,0,0.3)';
+            ctx.shadowBlur = size * 0.1;
+            ctx.shadowOffsetX = size * 0.05;
+            ctx.shadowOffsetY = size * 0.05;
+            
+            // Рисуем белый текст "BR"
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${size * 0.6}px Arial, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('BR', size/2, size/2);
+            
+            // Добавляем обводку для лучшей видимости
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = size * 0.02;
+            ctx.strokeText('BR', size/2, size/2);
+            
+            return canvas;
+        }
+        
+        function generateIcon(size) {
+            const canvas = drawIcon(size);
+            const dataURL = canvas.toDataURL('image/png');
+            generatedIcons[size] = { canvas, dataURL };
+            
+            // Создаем preview
+            const preview = document.createElement('div');
+            preview.className = 'icon-preview';
+            preview.innerHTML = `
+                <canvas width="${size}" height="${size}"></canvas>
+                <br>${size}x${size}
+            `;
+            
+            // Копируем изображение в preview
+            const previewCanvas = preview.querySelector('canvas');
+            const previewCtx = previewCanvas.getContext('2d');
+            previewCtx.drawImage(canvas, 0, 0);
+            
+            document.getElementById('iconPreviews').appendChild(preview);
+            
+            return dataURL;
+        }
+        
+        function generateAllIcons() {
+            const status = document.getElementById('status');
+            status.textContent = 'Generating icons...';
+            status.className = 'status info';
+            
+            document.getElementById('iconPreviews').innerHTML = '';
+            generatedIcons = {};
+            
+            try {
+                iconSizes.forEach(size => {
+                    generateIcon(size);
+                });
+                
+                status.textContent = `✅ Generated ${iconSizes.length} icons successfully!`;
+                status.className = 'status success';
+                
+                document.getElementById('downloadAllBtn').style.display = 'inline-block';
+                document.getElementById('downloadLinks').style.display = 'block';
+                
+                // Настраиваем ссылки для скачивания
+                document.getElementById('download16').href = generatedIcons[16].dataURL;
+                document.getElementById('download32').href = generatedIcons[32].dataURL;
+                document.getElementById('download192').href = generatedIcons[192].dataURL;
+                document.getElementById('download512').href = generatedIcons[512].dataURL;
+                
+                // Настраиваем атрибуты download
+                document.getElementById('download16').download = 'icon-16.png';
+                document.getElementById('download32').download = 'icon-32.png';
+                document.getElementById('download192').download = 'icon-192.png';
+                document.getElementById('download512').download = 'icon-512.png';
+                
+            } catch (error) {
+                status.textContent = `❌ Error generating icons: ${error.message}`;
+                status.className = 'status error';
+                console.error('Error generating icons:', error);
+            }
+        }
+        
+        function downloadAllIcons() {
+            iconSizes.forEach(size => {
+                const link = document.createElement('a');
+                link.href = generatedIcons[size].dataURL;
+                link.download = `icon-${size}.png`;
+                link.click();
+            });
+        }
+        
+        // Event listeners
+        document.getElementById('generateBtn').addEventListener('click', generateAllIcons);
+        document.getElementById('downloadAllBtn').addEventListener('click', downloadAllIcons);
+        
+        // Auto-generate on load
+        window.addEventListener('load', () => {
+            setTimeout(generateAllIcons, 500);
+        });
+    </script>
+</body>
+</html>
+
