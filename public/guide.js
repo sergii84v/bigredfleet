@@ -1,3 +1,6 @@
+// Guide interface for BigRed Workshop v1.1
+// Handles tour guide operations: logging hours, creating tickets, managing test drives
+
 import { supabase } from './supabase.js';
 import {
   listBuggies,
@@ -297,6 +300,20 @@ async function init() {
     }
   });
 
+  // Антикэш: ждем пользователя и загружаем свежие данные
+  async function waitUser() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) return user;
+    return new Promise((resolve) => {
+      const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+        if (session?.user) { sub.subscription.unsubscribe(); resolve(session.user); }
+      });
+      setTimeout(() => { sub.subscription.unsubscribe(); resolve(null); }, 1500);
+    });
+  }
+
+  await waitUser();
+  
   // Устанавливаем роль и имя пользователя
   const role = localStorage.getItem('role') || 'guide';
   const roleTitle = document.getElementById('roleTitle');
@@ -440,10 +457,9 @@ async function loadBuggies() {
 async function loadMyOpenTickets() {
   const tickets = await listMyOpenTickets();
   
-
-
   // список внизу
   const list = document.getElementById('myTickets');
+  
   list.innerHTML = tickets.length
     ? tickets.map(t => {
         return `
@@ -553,6 +569,7 @@ async function createTicket() {
   
   // ===> ДОБАВЛЯЕМ вызов вебхука (не блокирует пользователя)
   try {
+    // Получаем пользователя для вебхука
     const { data: { user } } = await supabase.auth.getUser();
 
     // достанем номер багги из селекта, чтобы не делать доп. запрос

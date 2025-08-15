@@ -16,9 +16,9 @@ function showToast(msg, type = 'info') {
 
 async function guardRedirectIfSignedIn() {
   try {
-    const { data } = await supabase.auth.getUser();
-    const email = data?.user?.email || '';
-    if (email && email.endsWith('@admin.local')) {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user?.email?.endsWith('@admin.local')) {
+      console.log('[Auth] Already logged in as admin, redirecting...');
       window.location.href = './admin.html';
     }
   } catch (_) {}

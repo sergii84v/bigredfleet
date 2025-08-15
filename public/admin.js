@@ -549,13 +549,37 @@ function initAdminTickets() {
 }
 
 export async function init() {
-  // Auth guard
-  const { data: u } = await supabase.auth.getUser();
-  const user = u?.user || null;
-  if (!user) { window.location.href = './admin-login.html'; return; }
-  const email = user.email || '';
-  if (!email.endsWith('@admin.local')) { window.location.href = './index.html'; return; }
+  // Импортируем функцию проверки аутентификации
+  const { checkAuth, setupAuthListener } = await import('./auth-check.js');
+  
+  // Проверяем аутентификацию для админа
+  const { user, isAuthenticated } = await checkAuth('admin', './admin-login.html');
+  
+  if (!isAuthenticated) {
+    return; // Редирект уже произошел в checkAuth
+  }
+  
+  // Настраиваем слушатель изменений аутентификации
+  setupAuthListener((event, session) => {
+    if (event === 'SIGNED_OUT') {
+      window.location.href = './admin-login.html';
+    }
+  });
 
+  // Антикэш: ждем пользователя и загружаем свежие данные
+  async function waitUser() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) return user;
+    return new Promise((resolve) => {
+      const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+        if (session?.user) { sub.subscription.unsubscribe(); resolve(session.user); }
+      });
+      setTimeout(() => { sub.subscription.unsubscribe(); resolve(null); }, 1500);
+    });
+  }
+
+  await waitUser();
+  
   // Admin profile name
   try {
     const { name } = await getAdminProfile();

@@ -21,11 +21,17 @@ export async function checkAuth(requiredRole, loginUrl) {
     if (session?.user) {
       console.log('[Auth] Valid session found:', session.user.email);
       
-      // Проверяем, что пользователь имеет правильную роль
-      const email = session.user.email || '';
-      const expectedDomain = `@${requiredRole}s.local`;
-      
-      if (email.endsWith(expectedDomain)) {
+          // Проверяем, что пользователь имеет правильную роль
+    const email = session.user.email || '';
+    let expectedDomain;
+    
+    if (requiredRole === 'admin') {
+      expectedDomain = '@admin.local';
+    } else {
+      expectedDomain = `@${requiredRole}s.local`;
+    }
+    
+    if (email.endsWith(expectedDomain)) {
         // Восстанавливаем данные пользователя в localStorage если их нет
         if (!localStorage.getItem('role')) {
           localStorage.setItem('role', requiredRole);

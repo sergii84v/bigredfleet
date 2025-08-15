@@ -1034,6 +1034,20 @@ async function init() {
     }
   });
 
+  // Антикэш: ждем пользователя и загружаем свежие данные
+  async function waitUser() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) return user;
+    return new Promise((resolve) => {
+      const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+        if (session?.user) { sub.subscription.unsubscribe(); resolve(session.user); }
+      });
+      setTimeout(() => { sub.subscription.unsubscribe(); resolve(null); }, 1500);
+    });
+  }
+
+  await waitUser();
+  
   // Устанавливаем роль и имя пользователя
   const role = localStorage.getItem('role') || 'mechanic';
   const roleTitle = document.getElementById('roleTitle');

@@ -96,7 +96,18 @@ export function subscribeTickets(cb) {
 }
 
 export async function createTicketSimple({ buggy_id = null, priority = "medium", description = "" }) {
-  const payload = { buggy_id, priority, description, status: "open" };
+  // Получаем текущего пользователя для created_by
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user?.id) throw new Error("Not authenticated");
+  
+  const payload = { 
+    buggy_id, 
+    priority, 
+    description, 
+    status: "open",
+    created_by: user.id  // ✅ Добавляем created_by
+  };
+  
   const { data, error } = await supabase.from("tickets").insert(payload).select('id').single();
   if (error) throw error;
   return data;
@@ -170,17 +181,15 @@ export async function updateTicketFields(id, patch) {
 export async function listMyOpenTickets() {
   const { data: auth } = await supabase.auth.getUser();
   const user = auth?.user;
-  console.log('[guide] user id:', user?.id);
+  
   if (!user?.id) return; // на всякий случай, если не залогинен
 
   const { data, error } = await supabase
     .from('tickets')
-    .select('id, buggy_id, description, status, created_at, test_drive_requested')
+    .select('id, buggy_id, description, status, created_at')
     .eq('created_by', user.id)                    // ← вот это главное
     .in('status', ['open', 'in_progress'])
     .order('created_at', { ascending: false });
-
-  console.log('[guide] my tickets:', { data, error });
   
   if (error) throw error;
   
