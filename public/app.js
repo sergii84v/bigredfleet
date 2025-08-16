@@ -203,6 +203,14 @@ async function handleAssign(ticketId) {
   if (t.assignee) { await refreshTickets(); return; }
   await updateTicket(ticketId, { assignee: userId });
   showToast('Assigned', 'success');
+  
+  // Обновляем состояние кнопок в текущей карточке
+  const cardEl = document.querySelector(`[data-id="${ticketId}"]`);
+  if (cardEl) {
+    const updatedTicket = { ...t, assignee: userId };
+    applyButtonState(cardEl, updatedTicket, userId);
+  }
+  
   await refreshTickets();
 }
 
@@ -219,6 +227,23 @@ async function handleStart(ticketId) {
   if (!t.assignee) patch.assignee = userId;
   await updateTicket(ticketId, patch);
   showToast('Started', 'success');
+  
+  // Обновляем состояние кнопок в текущей карточке
+  const cardEl = document.querySelector(`[data-id="${ticketId}"]`);
+  if (cardEl) {
+    const updatedTicket = { ...t, ...patch };
+    applyButtonState(cardEl, updatedTicket, userId);
+    
+    // Дополнительно обновляем состояние кнопки Save odometer
+    const saveOdoBtn = cardEl.querySelector('[data-role="save-odo"]');
+    if (saveOdoBtn) {
+      if (patch.status === 'in_progress') {
+        saveOdoBtn.disabled = false;
+        saveOdoBtn.classList.remove('disabled');
+      }
+    }
+  }
+  
   await refreshTickets();
 }
 
@@ -282,6 +307,23 @@ async function handleDone(ticketId) {
   }
 
   showToast('Completed', 'success');
+  
+  // Обновляем состояние кнопок в текущей карточке
+  const cardEl = document.querySelector(`[data-id="${ticketId}"]`);
+  if (cardEl) {
+    const updatedTicket = { ...t, ...patch };
+    applyButtonState(cardEl, updatedTicket, userId);
+    
+    // Дополнительно обновляем состояние кнопки Save odometer
+    const saveOdoBtn = cardEl.querySelector('[data-role="save-odo"]');
+    if (saveOdoBtn) {
+      if (patch.status === 'done') {
+        saveOdoBtn.disabled = true;
+        saveOdoBtn.classList.add('disabled');
+      }
+    }
+  }
+  
   await refreshTickets();
 }
 
@@ -592,7 +634,7 @@ async function renderTickets(tickets = null) {
 
             <div class="grid grid-cols-2 gap-3 mt-4">
               <div>
-                <div class="text-slate-600 text-sm uppercase tracking-wide font-medium mb-1">Hours (odometer)</div>
+                <div class="text-slate-600 text-sm uppercase tracking-wide font-medium mb-1">Hours (odo)</div>
                 <input type="number" min="0" step="1" class="hours-in border rounded-lg px-3 py-2 w-full" value="${t.hours_in ?? ''}" placeholder="e.g. 128" data-role="odometer"/>
               </div>
               <div>
@@ -636,12 +678,23 @@ async function renderTickets(tickets = null) {
     const ticket = tickets[i];
     applyButtonState(cardEl, ticket, currentUserId);
     
-    // Initialize save button state based on input values
+    // Initialize save button state based on input values and ticket status
     const od = cardEl.querySelector('[data-role="odometer"]');
     const km = cardEl.querySelector('[data-role="km"]');
     const saveBtn = cardEl.querySelector('[data-role="save-odo"]');
     if (saveBtn) {
-      saveBtn.disabled = !(od?.value.trim() && km?.value.trim());
+      const hasInputs = od?.value.trim() && km?.value.trim();
+      const isDone = ticket.status === 'done';
+      
+      // Кнопка активна только если есть ввод И статус не "done"
+      saveBtn.disabled = !hasInputs || isDone;
+      
+      // Добавляем CSS класс для визуального отображения
+      if (isDone) {
+        saveBtn.classList.add('disabled');
+      } else {
+        saveBtn.classList.remove('disabled');
+      }
     }
   });
   
@@ -660,22 +713,47 @@ function applyButtonState(cardEl, ticket, currentUserId) {
 
   if (status === 'open') {
     btnStart?.removeAttribute('disabled');
+    btnStart?.classList.remove('disabled');
     btnDone?.removeAttribute('disabled');
-    if (btnAssign) btnAssign.disabled = !canAssign;
+    btnDone?.classList.remove('disabled');
+    if (btnAssign) {
+      btnAssign.disabled = !canAssign;
+      if (!canAssign) btnAssign.classList.add('disabled');
+      else btnAssign.classList.remove('disabled');
+    }
   } else if (status === 'in_progress') {
     btnStart?.setAttribute('disabled','true');
+    btnStart?.classList.add('disabled');
     btnDone?.removeAttribute('disabled');
+    btnDone?.classList.remove('disabled');
     btnAssign?.setAttribute('disabled','true');
+    btnAssign?.classList.add('disabled');
   } else {
     // done
     btnStart?.setAttribute('disabled','true');
+    btnStart?.classList.add('disabled');
     btnDone?.setAttribute('disabled','true');
+    btnDone?.classList.add('disabled');
     btnAssign?.setAttribute('disabled','true');
+    btnAssign?.classList.add('disabled');
   }
 
   // переназначаем на новый обработчик для кнопки Save hours
   const saveBtn = cardEl.querySelector('.btn-save-hours');
   if (saveBtn) saveBtn.onclick = () => handleSaveOdometerAndKm(ticket);
+  
+  // Управление активностью кнопки Save odometer
+  const saveOdoBtn = cardEl.querySelector('[data-role="save-odo"]');
+  if (saveOdoBtn) {
+    if (status === 'done') {
+      saveOdoBtn.disabled = true;
+      saveOdoBtn.classList.add('disabled');
+    } else {
+      // open или in_progress
+      saveOdoBtn.disabled = false;
+      saveOdoBtn.classList.remove('disabled');
+    }
+  }
 }
 
 // === helper: toast function ===

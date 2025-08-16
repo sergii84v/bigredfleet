@@ -247,6 +247,129 @@ body {
   font-size: 1rem;
 }
 
+/* Disabled button states */
+.btn:disabled,
+.btn.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+  background: #9ca3af !important;
+  color: #6b7280 !important;
+  border-color: #d1d5db !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.btn:disabled:hover,
+.btn.disabled:hover {
+  background: #9ca3af !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Specific disabled states for button types */
+.btn-primary:disabled,
+.btn-primary.disabled {
+  background: #9ca3af !important;
+  color: #6b7280 !important;
+}
+
+.btn-success:disabled,
+.btn-success.disabled {
+  background: #9ca3af !important;
+  color: #6b7280 !important;
+}
+
+.btn-warning:disabled,
+.btn-warning.disabled {
+  background: #9ca3af !important;
+  color: #6b7280 !important;
+}
+
+.btn-secondary:disabled,
+.btn-secondary.disabled {
+  background: #9ca3af !important;
+  color: #6b7280 !important;
+}
+
+/* Guide ticket buttons specific styles */
+.btn-success {
+  background: #10b981;
+  color: #fff;
+  box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.25);
+}
+
+.btn-success:hover {
+  background: #059669;
+}
+
+.btn-warning {
+  background: #f59e0b;
+  color: #fff;
+  box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.25);
+}
+
+.btn-warning:hover {
+  background: #d97706;
+}
+
+/* Ensure icons are visible in buttons */
+.btn i[data-lucide] {
+  color: inherit !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+.btn-success i[data-lucide] {
+  color: #fff !important;
+}
+
+.btn-warning i[data-lucide] {
+  color: #fff !important;
+}
+
+/* SVG icons in buttons */
+.btn svg {
+  width: 1rem;
+  height: 1rem;
+  color: inherit;
+}
+
+.btn-success svg {
+  color: #fff !important;
+  stroke: #fff !important;
+}
+
+.btn-warning svg {
+  color: #fff !important;
+  stroke: #fff !important;
+}
+
+/* Force icon visibility */
+.btn i[data-lucide],
+.btn svg {
+  display: inline-block !important;
+  vertical-align: middle !important;
+}
+
+.btn-secondary {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.btn-secondary:hover {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+/* Fix for ticket status overflow */
+.ticket-card .text-slate-600.text-xs.uppercase {
+  word-break: break-word;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
 /* === FORM CONTROLS === */
 .form-group {
   margin-bottom: 1rem;

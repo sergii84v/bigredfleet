@@ -351,35 +351,33 @@ async function init() {
   await initJobCardUI();
   
   // Делегированный обработчик для кнопок управления тикетами
-  const guideListEl = document.querySelector('#myTickets');
-  if (guideListEl && !guideListEl.__gdActionsBound) {
-    guideListEl.addEventListener('click', async (e) => {
-      const okBtn = e.target.closest('.gd-btn-complete');
-      const backBtn = e.target.closest('.gd-btn-rework');
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('button[data-action][data-id]');
+    if (!btn) return;
 
-      if (okBtn) {
-        const id = okBtn.dataset.id;
-        okBtn.disabled = true;
-        try {
-          await guideCompleteTicket(id);
-        } finally {
-          okBtn.disabled = false; // при успешном апдейте список перерисуется и кнопки исчезнут
-        }
+    const action = btn.dataset.action;       // 'test_passed' | 'send_back'
+    const ticketId = btn.dataset.id;
+
+    // визуальный фидбек
+    btn.disabled = true;
+    const prevText = btn.innerHTML;
+    btn.innerHTML = 'Please wait…';
+
+    try {
+      if (action === 'test_passed') {
+        await guideCompleteTicket(ticketId);
+      } else if (action === 'send_back') {
+        await guideSendBackForRework(ticketId);
       }
-
-      if (backBtn) {
-        const id = backBtn.dataset.id;
-        backBtn.disabled = true;
-        try {
-          await guideSendBackForRework(id);
-        } finally {
-          backBtn.disabled = false;
-        }
-      }
-    });
-
-    guideListEl.__gdActionsBound = true;
-  }
+      await loadMyOpenTickets(); // обновляем список тикетов
+    } catch (err) {
+      console.error(err);
+      alert('Failed to update ticket, please try again.');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = prevText;
+    }
+  });
 }
 
 async function doLogout() {
@@ -473,14 +471,26 @@ async function loadMyOpenTickets() {
               ${t.test_drive === 'requested' ? `
                 <div class="mt-3 flex gap-2">
                   <button
-                    class="gd-btn-complete px-4 py-2 rounded-full text-white bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 text-sm"
+                    class="btn btn-success px-3 py-2 text-sm"
+                    data-action="test_passed"
                     data-id="${t.id}"
-                  >✓ Test passed</button>
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                      <path d="M20 6 9 17l-5-5"/>
+                    </svg>
+                    Test passed
+                  </button>
 
                   <button
-                    class="gd-btn-rework px-4 py-2 rounded-full text-white bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-sm"
+                    class="btn btn-warning px-3 py-2 text-sm"
+                    data-action="send_back"
                     data-id="${t.id}"
-                  >↩ Send back</button>
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                      <path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/>
+                    </svg>
+                    Send back
+                  </button>
                 </div>
               ` : ``}
             </div>
