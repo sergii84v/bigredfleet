@@ -530,7 +530,25 @@ async function saveHours() {
     if (!isNaN(dt)) reading_at = dt.toISOString();
   }
 
-  await logBuggyHoursSimple({ buggy_id, hours: Number(hoursVal), reading_at });
+  // Получаем текущего пользователя и его имя
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  const guideName =
+    user?.user_metadata?.full_name
+    || user?.email?.split('@')[0]
+    || 'Guide'; // запасной вариант
+
+  // Вставляем с guide_name
+  const { error } = await supabase
+    .from('buggy_hours_logs')
+    .insert([{
+      buggy_id,
+      reading_at,    // дата/время тура
+      hours: Number(hoursVal),         // часы
+      guide_name: guideName // <- NEW
+    }]);
+
+  if (error) throw error;
 
   document.getElementById('hoursVal').value = '';
   setDefaultDateToToday();
@@ -544,13 +562,25 @@ async function renderRecentHours() {
   const recent = await listMyRecentHours(5);
   const el = document.getElementById('recentHours');
   if (!recent.length) { el.innerHTML = `<div class="text-slate-400">No recent hours</div>`; return; }
+  
+  function formatDate(dateStr) {
+    if (!dateStr) return '—';
+    return new Date(dateStr).toLocaleDateString('en-US', {
+      month: 'numeric',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  }
+  
   el.innerHTML = `
     <div class="mt-2 text-slate-700">Recent:</div>
     <ul class="mt-1 space-y-1">
       ${recent.map(h => `
         <li class="text-slate-600 text-sm">
-          ${new Date(h.reading_at || h.created_at).toLocaleString()}
-          • ${h.hours ?? '—'} h
+          ${formatDate(h.reading_at)} • #${h.buggy_number ?? '—'} • ${h.hours} h
         </li>
       `).join('')}
     </ul>

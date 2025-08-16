@@ -20,61 +20,88 @@
     <link rel="manifest" href="/manifest.webmanifest">
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://unpkg.com/@headlessui/vue@latest/dist/headlessui.umd.js"></script>
 </head>
 <body>
     <div class="flex flex-col items-center justify-center min-h-screen bg-red-500 text-white px-4">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold mb-2">BigRed Workshop</h1>
-            <p class="text-lg opacity-90">Choose your role to continue</p>
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-3">BigRed Fleet App</h1>
+            <p class="text-xl opacity-90">Choose your role to continue</p>
         </div>
 
-        <div class="role-grid w-full max-w-3xl">
-          <!-- Mechanic button -->
-          <a href="./mechanic-login.html" aria-label="Mechanic login"
-             class="role-btn inline-flex items-center justify-center
-                    rounded-xl bg-white text-red-600 font-semibold
-                    px-6 py-4 shadow-lg transition-all duration-200
-                    hover:shadow-xl hover:-translate-y-0.5
-                    active:translate-y-0 active:shadow-lg
-                    focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50">
-            I am a Mechanic
-          </a>
+        <!-- Role Switcher -->
+        <div class="w-full max-w-md mb-8">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                <!-- Switcher Header -->
+                <div class="text-center mb-6">
+                    <h2 class="text-lg font-semibold mb-2">Select Role</h2>
+                    <p class="text-sm opacity-75">Switch between Guide and Mechanic</p>
+                </div>
 
-          <!-- Guide button -->
-          <a href="./guide-login.html" aria-label="Guide login"
-             class="role-btn inline-flex items-center justify-center
-                    rounded-xl bg-white text-red-600 font-semibold
-                    px-6 py-4 shadow-lg transition-all duration-200
-                    hover:shadow-xl hover:-translate-y-0.5
-                    active:translate-y-0 active:shadow-lg
-                    focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50">
-            I am a Guide
-          </a>
+                <!-- Switcher Toggle -->
+                <div class="flex items-center justify-center mb-6">
+                    <div class="relative inline-flex h-14 w-24 items-center rounded-full bg-white/20 p-1 transition-colors">
+                        <button 
+                            id="guideToggle"
+                            class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-red-600 shadow-lg transition-all duration-300 transform translate-x-0"
+                            onclick="switchRole('guide')">
+                            <i data-lucide="user" class="w-6 h-6"></i>
+                        </button>
+                        <button 
+                            id="mechanicToggle"
+                            class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-transparent text-white transition-all duration-300 transform translate-x-0"
+                            onclick="switchRole('mechanic')">
+                            <i data-lucide="wrench" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                </div>
 
-          <!-- Admin button -->
-          <a href="./admin-login.html" aria-label="Admin login"
-             class="role-btn inline-flex items-center justify-center
-                    rounded-xl bg-white text-red-600 font-semibold
-                    px-6 py-4 shadow-lg transition-all duration-200
-                    hover:shadow-xl hover:-translate-y-0.5
-                    active:translate-y-0 active:shadow-lg
-                    focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50">
-            I am an Admin
-          </a>
+                <!-- Continue Button -->
+                <button 
+                    id="continueBtn"
+                    onclick="continueToRole()"
+                    class="w-full bg-white text-red-600 font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-white/50">
+                    Continue as Guide
+                </button>
+            </div>
+        </div>
+
+        <!-- Admin Button -->
+        <div class="w-full max-w-md">
+            <a href="./admin-login.html" 
+               class="inline-flex items-center justify-center gap-3 w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 hover:bg-white/20 hover:border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50">
+                <i data-lucide="user-cog" class="w-5 h-5"></i>
+                I am an Admin
+            </a>
         </div>
     </div>
 
   <style>
-    .role-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      justify-items: center;
+    /* Switcher animations */
+    .switcher-active {
+      background-color: white !important;
+      color: #dc2626 !important;
+      transform: scale(105%);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     }
-    @media (min-width: 1024px) {
-      .role-grid { grid-template-columns: repeat(3, 1fr); }
+    
+    .switcher-inactive {
+      background-color: transparent !important;
+      color: white !important;
+      transform: scale(100%);
     }
-    .role-btn { width: 100%; max-width: 260px; }
+    
+    /* Smooth transitions */
+    .switcher-toggle {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Glassmorphism effect */
+    .glass-card {
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
   </style>
   
   <!-- PWA Scripts -->
@@ -88,5 +115,50 @@
     }
   </script>
   <script src="/pwa-install.js"></script>
+  
+  <!-- Initialize Lucide icons and switcher logic -->
+  <script>
+    let currentRole = 'guide';
+    
+    // Инициализируем иконки Lucide после загрузки страницы
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+      updateSwitcherState();
+    });
+    
+    // Функция переключения роли
+    function switchRole(role) {
+      currentRole = role;
+      updateSwitcherState();
+    }
+    
+    // Обновление состояния свитчера
+    function updateSwitcherState() {
+      const guideToggle = document.getElementById('guideToggle');
+      const mechanicToggle = document.getElementById('mechanicToggle');
+      const continueBtn = document.getElementById('continueBtn');
+      
+      if (currentRole === 'guide') {
+        guideToggle.className = 'inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-red-600 shadow-lg transition-all duration-300 transform translate-x-0 switcher-active';
+        mechanicToggle.className = 'inline-flex h-12 w-12 items-center justify-center rounded-full bg-transparent text-white transition-all duration-300 transform translate-x-0 switcher-inactive';
+        continueBtn.textContent = 'Continue as Guide';
+      } else {
+        guideToggle.className = 'inline-flex h-12 w-12 items-center justify-center rounded-full bg-transparent text-white transition-all duration-300 transform translate-x-0 switcher-inactive';
+        mechanicToggle.className = 'inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-red-600 shadow-lg transition-all duration-300 transform translate-x-0 switcher-active';
+        continueBtn.textContent = 'Continue as Mechanic';
+      }
+    }
+    
+    // Функция перехода к выбранной роли
+    function continueToRole() {
+      if (currentRole === 'guide') {
+        window.location.href = './guide-login.html';
+      } else {
+        window.location.href = './mechanic-login.html';
+      }
+    }
+  </script>
   </body>
 </html>

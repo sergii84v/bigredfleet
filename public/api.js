@@ -251,12 +251,37 @@ export async function logBuggyHoursSimple({ buggy_id, hours, reading_at = null, 
 
 // Обновим выборку последних логов, чтобы показывать hours/reading_at
 export async function listMyRecentHours(limit = 10) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user?.id) return [];
+  
   const { data, error } = await supabase
     .from('buggy_hours_logs')
     .select('id, buggy_id, hours, reading_at, note, created_at')
+    .eq('created_by', user.id)
     .order('created_at', { ascending: false })
     .limit(limit);
+  
   if (error) throw error;
+  
+  // Подтягиваем номера багги
+  if (data && data.length > 0) {
+    const buggyIds = data.map(h => h.buggy_id).filter(Boolean);
+    if (buggyIds.length > 0) {
+      const { data: buggies, error: buggiesErr } = await supabase
+        .from('buggies')
+        .select('id, number')
+        .in('id', buggyIds);
+      
+      if (!buggiesErr && buggies) {
+        const buggyMap = new Map(buggies.map(b => [b.id, b.number]));
+        // Добавляем buggy_number к каждому логу
+        data.forEach(hours => {
+          hours.buggy_number = buggyMap.get(hours.buggy_id) || null;
+        });
+      }
+    }
+  }
+  
   return data || [];
 }
 

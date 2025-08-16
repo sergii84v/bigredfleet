@@ -1,5 +1,79 @@
 import { supabase } from './supabase.js';
 
+// Helper for buggy status badges (legacy, not used anymore)
+function renderBuggyStatusBadge(buggyId) {
+  // This function is kept for backward compatibility but not used in new implementation
+  return '';
+}
+
+// 2) при рендере карточки
+function renderBuggyCard(b, statusById) {
+  const st = statusById.get(b.id) || {};
+  const isService = st.status_label === 'in_service';
+
+  // бейдж с fallback'ами (приоритет: At dealer > In service > Ready)
+  let badgeText, badgeClass;
+  if (b._uiAtDealer) {
+    badgeText = 'At dealer';
+    badgeClass = 'bg-sky-100 text-sky-700';
+  } else if (st.status_label) {
+    if (isService) {
+      badgeText = 'In service';
+      badgeClass = 'bg-amber-100 text-amber-700';
+    } else {
+      badgeText = 'Ready';
+      badgeClass = 'bg-emerald-100 text-emerald-700';
+    }
+  } else {
+    badgeText = '—';
+    badgeClass = 'bg-gray-100 text-gray-500';
+  }
+
+  // подпись под заголовком с fallback'ами
+  let subtitle;
+  if (b._uiAtDealer) {
+    subtitle = 'At dealer';
+  } else if (isService && st.in_service_since) {
+    subtitle = `since ${fmtDate(st.in_service_since)} · ${daysFrom(st.in_service_since)}d`;
+  } else if (st.last_ticket_at) {
+    subtitle = `Updated ${timeAgo(st.last_ticket_at)}`;
+  } else {
+    subtitle = 'No status';
+  }
+
+  return `
+    <div class="buggy-chip" title="${b.model??''}">
+      <div class="buggy-chip__header">
+        <span class="buggy-chip__num">#${b.number}${b.model ? ' · '+b.model : ''}</span>
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${badgeClass}">${badgeText}</span>
+      </div>
+      <div class="buggy-chip__subtitle text-slate-500 text-sm">${subtitle}</div>
+    </div>
+  `;
+}
+
+// 3) хелперы дат
+function fmtDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString(undefined, { day:'2-digit', month:'2-digit', year:'numeric' });
+}
+
+function daysFrom(iso) {
+  const ms = Date.now() - new Date(iso).getTime();
+  return Math.max(0, Math.floor(ms / 86400000)); // 24*60*60*1000
+}
+
+function timeAgo(iso) {
+  const sec = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (sec < 60)   return `${sec}s ago`;
+  const min = Math.floor(sec/60);
+  if (min < 60)   return `${min}m ago`;
+  const hr  = Math.floor(min/60);
+  if (hr < 24)    return `${hr}h ago`;
+  const d   = Math.floor(hr/24);
+  return `${d}d ago`;
+}
+
 // Job Cards: load buggies for select
 async function hydrateJobCardsBuggies() {
   const sel = document.getElementById('jobcards-buggy');
@@ -69,9 +143,11 @@ const TICKETS_PAGE_SIZE = 20;
 function readTicketFilters() {
   const statusEl   = document.getElementById('tickets-status');
   const priorityEl = document.getElementById('tickets-priority');
+  const buggyEl    = document.getElementById('tickets-buggy');
   const status   = (statusEl?.value || '').trim();
   const priority = (priorityEl?.value || '').trim();
-  return { status, priority };
+  const buggy    = (buggyEl?.value || '').trim();
+  return { status, priority, buggy };
 }
 
 // Unified English labels
@@ -267,7 +343,7 @@ async function fetchDictionaries() {
 
 async function loadTickets() {
   // Read filters directly from DOM (ensure function exists)
-  const { status, priority } = (typeof readTicketFilters === 'function') ? readTicketFilters() : { status: '', priority: '' };
+  const { status, priority, buggy } = (typeof readTicketFilters === 'function') ? readTicketFilters() : { status: '', priority: '', buggy: '' };
 
   // determine page and range (ticketsPage driven by UI)
   const pageNum = ticketsPage || adminState.page || 1;
@@ -289,8 +365,9 @@ async function loadTickets() {
   // Apply filters only when present
   if (status)   q = q.eq('status', status);
   if (priority) q = q.eq('priority', priority);
+  if (buggy)    q = q.eq('buggy_number', buggy);
 
-  console.log('[tickets] querying with:', { status, priority, page: pageNum });
+  console.log('[tickets] querying with:', { status, priority, buggy, page: pageNum });
 
   const { data: tickets, error, count } = await q.range(from, to);
   if (error) { hideLoading(); console.error(error); showToast(error.message, 'error'); return; }
@@ -406,18 +483,14 @@ function renderCards(rows, dicts) {
   wrap.innerHTML = '';
   const getCreatorLabel = getCreatorLabelFactory(dicts);
   rows.forEach(t => {
-    const priorityClass = {
-      low: 'border-l-4 border-emerald-500',
-      medium: 'border-l-4 border-amber-500',
-      high: 'border-l-4 border-red-500'
-    }[String(t.priority||'').toLowerCase()] || 'border-l-4 border-slate-300';
 
-    const card = document.createElement('div');
-    card.className = `ticket-card rounded-2xl bg-white shadow-md ring-1 ring-slate-200 p-4 mb-4 ${priorityClass}`;
     const buggy = t.buggy_number || '—';
     const assigneeName = t.assignee_name || '—';
     const prio = String(t.priority||'').toLowerCase();
     const prioClass = prio==='high' ? 'prio-high' : prio==='medium' ? 'prio-medium' : 'prio-low';
+    
+    const card = document.createElement('div');
+    card.className = `ticket-card-mobile ${prioClass}`;
     card.innerHTML = `
       <div class="flex items-center justify-between mb-2">
         <div class="text-lg font-bold">Buggy ${buggy}</div>
@@ -463,7 +536,6 @@ function renderCards(rows, dicts) {
         <div class="col-span-2"><div class="text-[11px] uppercase tracking-wide text-slate-500">Notes</div><div>${t.notes ?? '—'}</div></div>
       </div>
     `;
-    card.classList.add('admin-card', prioClass);
     wrap.appendChild(card);
   });
 }
@@ -522,9 +594,9 @@ function bindTicketFilters() {
     wrap.addEventListener('change', (e) => {
       const t = e.target;
       if (!t) return;
-      if (t.id === 'tickets-status' || t.id === 'tickets-priority') {
+      if (t.id === 'tickets-status' || t.id === 'tickets-priority' || t.id === 'tickets-buggy') {
         ticketsPage = 1;
-        const f = (typeof readTicketFilters === 'function') ? readTicketFilters() : { status:'', priority:'' };
+        const f = (typeof readTicketFilters === 'function') ? readTicketFilters() : { status:'', priority:'', buggy:'' };
         console.log('[tickets] change ->', f);
         loadTickets();
       }
@@ -535,16 +607,50 @@ function bindTicketFilters() {
   resetBtn?.addEventListener('click', () => {
     const s = document.getElementById('tickets-status');
     const p = document.getElementById('tickets-priority');
+    const b = document.getElementById('tickets-buggy');
     if (s) s.value = '';
     if (p) p.value = '';
+    if (b) b.value = '';
     ticketsPage = 1;
     console.log('[tickets] reset');
     loadTickets();
   });
 }
 
+// Load buggies for tickets filter
+async function loadBuggiesForTicketsFilter() {
+  const buggySelect = document.getElementById('tickets-buggy');
+  if (!buggySelect) return;
+
+  try {
+    const { data, error } = await supabase
+      .from('buggies')
+      .select('id, number')
+      .order('number', { ascending: true });
+
+    if (error) {
+      console.warn('[admin] buggies load error:', error);
+      return;
+    }
+
+    // Clear existing options except "All buggies"
+    buggySelect.innerHTML = '<option value="">All buggies</option>';
+    
+    // Add buggy options
+    for (const buggy of data || []) {
+      const opt = document.createElement('option');
+      opt.value = String(buggy.number); // Filter by buggy_number
+      opt.textContent = String(buggy.number);
+      buggySelect.appendChild(opt);
+    }
+  } catch (e) {
+    console.error('[admin] Failed to load buggies for filter:', e);
+  }
+}
+
 function initAdminTickets() {
   bindTicketFilters();
+  loadBuggiesForTicketsFilter(); // Load buggies for filter
   loadTickets();
 }
 
@@ -729,10 +835,11 @@ async function populateHoursBuggies() {
 
   const { data, error } = await supabase
     .from('buggies')
-    .select('number')
+    .select('id, number')
     .order('number', { ascending: true });
 
   if (!error && Array.isArray(data)) {
+    console.log('[admin] Loaded buggies:', data);
     const seen = new Set();
     for (const row of data) {
       const num = row?.number;
@@ -740,9 +847,10 @@ async function populateHoursBuggies() {
       seen.add(num);
 
       const opt = document.createElement('option');
-      opt.value = String(num);
-      opt.textContent = String(num);
+      opt.value = String(row.id); // value = buggy_id
+      opt.textContent = String(num); // label = buggy_number
       sel.appendChild(opt);
+      console.log('[admin] Added option:', { value: opt.value, text: opt.textContent });
     }
   }
 
@@ -755,6 +863,8 @@ async function populateHoursBuggies() {
 
 // Apply filter using admin_buggy_hours view
 async function applyHoursFilter() {
+  console.log('[admin] applyHoursFilter called');
+  
   const buggySel = document.getElementById('hours-buggy');
   const fromEl   = document.getElementById('hours-from');
   const toEl     = document.getElementById('hours-to');
@@ -762,28 +872,72 @@ async function applyHoursFilter() {
   const buggyNumber = buggySel?.value || '';
   const fromVal  = fromEl?.value?.trim() || '';
   const toVal    = toEl?.value?.trim() || '';
+  
+  console.log('[admin] Filter values:', { buggyNumber, fromVal, toVal });
 
   // guard: nothing selected → do not query
   if (!buggyNumber && !fromVal && !toVal) { clearHoursResults(); return; }
 
   const fromISO = fromVal ? new Date(fromVal + 'T00:00:00Z').toISOString() : null;
-  const toISO   = toVal   ? new Date(toVal   + 'T23:59:59Z').toISOString()   : null;
+  const toISO   = toVal   ? new Date(toVal   + 'T23:59:59Z').toISOString() : null;
 
   let q = supabase
-    .from('admin_buggy_hours')
-    .select('buggy_number, hours, reading_at, note')
+    .from('buggy_hours_logs')
+    .select('reading_at, hours, guide_name, buggy_id, note')
     .order('reading_at', { ascending: false });
 
-  if (buggyNumber) q = q.eq('buggy_number', buggyNumber);
-  if (fromISO)     q = q.gte('reading_at', fromISO);
-  if (toISO)       q = q.lte('reading_at', toISO);
+  // Filter by buggy_id (which is the value of the select)
+  if (buggyNumber) {
+    console.log('[admin] Filtering by buggy_id:', buggyNumber);
+    q = q.eq('buggy_id', buggyNumber);
+  }
+  if (fromISO) {
+    console.log('[admin] Filtering by from date:', fromISO);
+    q = q.gte('reading_at', fromISO);
+  }
+  if (toISO) {
+    console.log('[admin] Filtering by to date:', toISO);
+    q = q.lte('reading_at', toISO);
+  }
 
+  console.log('[admin] Executing query...');
+  
+  // Сначала проверим, есть ли вообще записи в таблице
+  const { data: allData, error: allError } = await supabase
+    .from('buggy_hours_logs')
+    .select('*')
+    .limit(5);
+  
+  if (allError) {
+    console.error('[admin] Error checking all records:', allError);
+  } else {
+    console.log('[admin] All records in buggy_hours_logs:', { count: allData?.length || 0, data: allData || [] });
+  }
+  
+  // Проверим конкретный buggy_id
+  if (buggyNumber) {
+    const { data: specificData, error: specificError } = await supabase
+      .from('buggy_hours_logs')
+      .select('*')
+      .eq('buggy_id', buggyNumber)
+      .limit(5);
+    
+    if (specificError) {
+      console.error('[admin] Error checking specific buggy_id:', specificError);
+    } else {
+      console.log('[admin] Records for buggy_id', buggyNumber, ':', { count: specificData?.length || 0, data: specificData || [] });
+    }
+  }
+  
   const { data, error } = await q;
+  
   if (error) {
-    console.error('hours query error', error);
+    console.error('[admin] hours query error:', error);
     renderHoursTable([]);
     return;
   }
+  
+  console.log('[admin] Query result:', { count: data?.length || 0, data: data?.slice(0, 2) || [] });
   renderHoursTable(data || []);
 }
 
@@ -807,11 +961,7 @@ async function initAdminHours() {
 }
 
 // helpers (reuse if you already have them)
-function fmtDate(iso) {
-  if (!iso) return '—';
-  const d = new Date(iso);
-  return d.toLocaleString();
-}
+// fmtDate function already defined above
 // Hours formatting helpers
 function fmtDateISOToDMY(iso) {
   if (!iso) return '—';
@@ -856,16 +1006,12 @@ function renderHoursTable(rows) {
   if (!rows || rows.length === 0) {
     const tr = document.createElement('tr');
     const td = document.createElement('td');
-    td.colSpan = 3;
+    td.colSpan = 4;
     td.textContent = 'No records';
     td.className = 'text-slate-400 py-3';
     tr.appendChild(td);
     tbody.appendChild(tr);
-    // reset totals
-    const totalCell = document.getElementById('hours-total');
-    if (totalCell) totalCell.textContent = '0';
-    const badge = document.getElementById('hours-total-mobile');
-    if (badge) badge.textContent = 'No records';
+
     return;
   }
 
@@ -886,6 +1032,11 @@ function renderHoursTable(rows) {
     tdTime.className = 'py-2';
     tr.appendChild(tdTime);
 
+    const tdGuide = document.createElement('td');
+    tdGuide.textContent = r.guide_name ?? '—';
+    tdGuide.className = 'py-2';
+    tr.appendChild(tdGuide);
+
     const tdHours = document.createElement('td');
     tdHours.textContent = r.hours ?? '—';
     tdHours.className = 'py-2 text-right';
@@ -894,11 +1045,7 @@ function renderHoursTable(rows) {
     tbody.appendChild(tr);
   }
 
-  const total = rows.reduce((s, r) => s + (Number(r.hours) || 0), 0);
-  const totalCell = document.getElementById('hours-total');
-  if (totalCell) totalCell.textContent = String(total);
-  const badge = document.getElementById('hours-total-mobile');
-  if (badge) badge.textContent = `Total: ${total} h`;
+
 }
 
 // Initialize simplified Hours section API: populate first, then apply filters
@@ -923,38 +1070,124 @@ function initHoursSection() {
 // Clear results helper for Hours panel
 function clearHoursResults() {
   const tbody = document.querySelector('#hours-table tbody');
-  const totalCell = document.getElementById('hours-total');
   if (tbody) {
-    tbody.innerHTML = '<tr><td colspan="3" class="muted">No records</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" class="muted">No records</td></tr>';
   }
-  if (totalCell) totalCell.textContent = '—';
-  const badge = document.getElementById('hours-total-mobile');
-  if (badge) badge.textContent = 'No records';
 }
 
 // Load buggies card list
 async function loadBuggies(){
+  console.log('[admin] loadBuggies called');
   const root = document.getElementById('buggies-list');
   const cnt  = document.getElementById('buggies-count');
-  if(!root) return;
+  if(!root) {
+    console.error('[admin] buggies-list element not found');
+    return;
+  }
   root.innerHTML = 'Loading...';
-  const { data, error } = await supabase
-    .from('buggies')
-    .select('id, number, model, created_at')
-    .order('number', { ascending:true });
-  if (error){ root.textContent = 'Failed to load'; return; }
-  if (!data || data.length===0){
+  
+  console.log('[admin] Fetching buggies and statuses from database...');
+  
+  // 1) грузим бэгги + статусы + визиты к дилеру параллельно с безопасной обработкой ошибок
+  let buggies = [], e1 = null;
+  let statusById = new Map();
+  let activeDealerBuggyIds = new Set();
+  try {
+    console.log('[admin] Starting Promise.all...');
+    const [q1, q2, q3] = await Promise.all([
+      supabase.from('buggies').select('id, number, model, created_at').order('number', { ascending:true }),
+      supabase.from('buggy_status_view')
+        .select('buggy_id,status_label,last_ticket_at,in_service_since'),
+      supabase.from('dealer_visits_overview')
+        .select('buggy_number, returned_at')
+        .is('returned_at', null)
+    ]);
+    console.log('[admin] Promise.all completed, q1:', q1, 'q2:', q2, 'q3:', q3);
+    
+    if (q1.error) {
+      e1 = q1.error;
+      console.error('[admin] buggies query error:', e1);
+    } else {
+      buggies = q1.data ?? [];
+      console.log('[admin] buggies data:', buggies);
+    }
+    
+    if (q2.error) {
+      console.warn('[admin] buggy_status_view error → игнорируем:', q2.error);
+    } else {
+      statusById = new Map((q2.data ?? []).map(r => [r.buggy_id, r]));
+      console.log('[admin] statusById created:', statusById);
+    }
+    
+    if (q3.error) {
+      console.warn('[admin] dealer_visits_overview error → игнорируем:', q3.error);
+    } else {
+      activeDealerBuggyIds = buildActiveDealerSet(q3.data, buggies);
+      console.log('[admin] activeDealerBuggyIds created:', activeDealerBuggyIds);
+    }
+  } catch (err) {
+    console.warn('[admin] загрузка данных свалилась → рендерим без них:', err);
+  }
+  
+  if (e1) {
+    console.error('[admin] buggies error:', e1);
+    root.textContent = 'Failed to load buggies';
+    return;
+  }
+  
+  if (!buggies || buggies.length === 0) {
+    console.log('[admin] No buggies found');
     root.textContent = 'No buggies yet';
     if (cnt) cnt.textContent = '0';
     return;
   }
-  if (cnt) cnt.textContent = String(data.length);
-  root.innerHTML = data.map(b => `
-    <div class="buggy-chip" title="${b.model??''}">
-      <span class="buggy-chip__num">#${b.number}${b.model ? ' · '+b.model : ''}</span>
-      <span class="buggy-chip__date">${new Date(b.created_at ?? Date.now()).toLocaleDateString()}</span>
-    </div>
-  `).join('');
+  
+  console.log('[admin] Buggy data loaded:', { count: buggies.length, data: buggies.slice(0, 2) });
+  console.log('[admin] Statuses loaded:', { count: statusById.size, statusById: Object.fromEntries(statusById) });
+  
+  // Render summary
+  console.log('[admin] Rendering summary...');
+  let summary = '';
+  
+  // Подсчитываем счетчики с учетом багги "у дилера"
+  let readyCount = 0;
+  let inServiceCount = 0;
+  const atDealerCount = activeDealerBuggyIds.size;
+  
+  for (const b of buggies) {
+    // если багги у дилера — отмечаем для бейджа и пропускаем подсчёт ready/in_service
+    if (activeDealerBuggyIds.has(b.id)) {
+      b._uiAtDealer = true; // пометка для карточки
+      continue;
+    }
+    // иначе оставляем текущую логику
+    const st = statusById.get(b.id) || {};
+    if (st.status_label === 'in_service') {
+      inServiceCount++;
+    } else {
+      readyCount++;
+    }
+  }
+  
+  summary = [
+    { key: 'ready',      label: 'Ready',      count: readyCount },
+    { key: 'in_service', label: 'In service', count: inServiceCount },
+    { key: 'at_dealer',  label: 'At dealer',  count: atDealerCount },
+  ].map(x => `<span class="mr-3 inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-gray-100">${x.label}: <b class="ml-1">${x.count}</b></span>`).join('');
+  
+  const summaryEl = document.querySelector('#buggies-summary');
+  if (summaryEl) {
+    summaryEl.innerHTML = summary;
+    console.log('[admin] Summary rendered:', summary);
+  } else {
+    console.error('[admin] buggies-summary element not found');
+  }
+  
+  if (cnt) cnt.textContent = String(buggies.length);
+  console.log('[admin] Rendering buggy cards...');
+  
+  root.innerHTML = buggies.map(b => renderBuggyCard(b, statusById)).join('');
+  console.log('[admin] Buggy cards rendered');
 }
 
 // Populate buggy select for Job Cards
@@ -1301,6 +1534,23 @@ async function fillBuggySelectForJobCards() {
 
 // держим текущий фильтр здесь
 let dealerVisitsFilter = 'active';
+
+// Вспомогательная функция для построения Set активных визитов к дилеру
+function buildActiveDealerSet(visits, buggies) {
+  const ids = new Set();
+  // Создаем Map для быстрого поиска buggy.id по buggy.number
+  const buggyNumberToId = new Map(buggies.map(b => [b.number, b.id]));
+  
+  for (const v of visits || []) {
+    // Защита от разных регистров/типов
+    const isActive = v.returned_at === null || v.returned_at === undefined;
+    if (isActive && v.buggy_number) {
+      const buggyId = buggyNumberToId.get(v.buggy_number);
+      if (buggyId) ids.add(buggyId);
+    }
+  }
+  return ids;
+}
 
 function escapeHTML(s = '') {
   return s.replace(/[&<>"']/g, (ch) => (

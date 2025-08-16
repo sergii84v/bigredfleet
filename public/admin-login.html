@@ -3,40 +3,89 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin login • BigRed Workshop</title>
+  <title>Admin Login — BigRed Fleet App</title>
+  
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#ef4444" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="BigRed Fleet App" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <link rel="stylesheet" href="./style.css" />
 </head>
-<body class="min-h-screen flex items-center justify-center bg-red-500 text-white px-4">
-  <main class="w-full max-w-md">
-    <div class="text-center mb-6">
-      <h1 class="text-3xl font-extrabold tracking-tight">Admin login</h1>
+<body class="min-h-screen bg-red-500 text-white px-4">
+  <div class="flex flex-col items-center justify-center min-h-screen">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 mb-4">
+        <i data-lucide="user-cog" class="w-8 h-8"></i>
+      </div>
+      <h1 class="text-4xl font-bold mb-3">Admin Login</h1>
+      <p class="text-xl opacity-90">Enter your credentials to continue</p>
     </div>
 
-    <form id="adminLoginForm" class="bg-white text-slate-800 rounded-2xl shadow-xl p-6 space-y-4">
-      <div>
-        <label for="adminSelect" class="block text-sm font-semibold mb-2">Admin</label>
-        <select id="adminSelect" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-gray-800 shadow-sm">
-          <option value="">Select admin</option>
-        </select>
+    <!-- Login Form -->
+    <div class="w-full max-w-md mb-8">
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+        <form id="adminLoginForm" class="space-y-6" onsubmit="return false;">
+          <div>
+            <label for="adminSelect" class="block text-sm font-medium text-white/90 mb-2">Admin</label>
+            <select id="adminSelect" 
+                    class="w-full px-4 py-3 rounded-xl text-gray-800 bg-white shadow-lg border-0 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-red-500 transition-all duration-200">
+              <option value="">Select admin</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="adminPin" class="block text-sm font-medium text-white/90 mb-2">PIN</label>
+            <input id="adminPin" type="password" inputmode="numeric" maxlength="6" placeholder="6-digit PIN" 
+                   class="w-full px-4 py-3 rounded-xl text-gray-800 bg-white shadow-lg border-0 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-red-500 transition-all duration-200" />
+          </div>
+
+          <button id="adminSignIn" type="submit" 
+                  class="w-full bg-white text-red-600 font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-red-500">
+            Sign in
+          </button>
+        </form>
       </div>
+    </div>
 
-      <div>
-        <label for="adminPin" class="block text-sm font-semibold mb-2">PIN</label>
-        <input id="adminPin" type="password" inputmode="numeric" maxlength="6" placeholder="6-digit PIN" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-gray-800 shadow-sm" />
-      </div>
-
-      <button id="adminSignIn" type="submit" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold px-5 py-3 rounded-xl shadow-lg transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-red-300">Sign in</button>
-    </form>
-
-    <div class="mt-4 text-center">
-      <a href="./index.html" class="underline underline-offset-4 text-white/90 hover:text-white">Back</a>
+    <!-- Back to Main -->
+    <div class="mt-8">
+      <a href="./index.html" 
+         class="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors duration-200">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        Back to main
+      </a>
     </div>
 
     <div id="toastWrap" class="toast-wrap"></div>
-  </main>
+  </div>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(registration => console.log('SW registered'))
+          .catch(error => console.log('SW registration failed'));
+      });
+    }
+  </script>
 
   <script type="module" src="./admin-login.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
 </body>
 </html>
 

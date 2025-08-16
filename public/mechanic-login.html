@@ -3,43 +3,98 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mechanic Login — BigRed</title>
+  <title>Mechanic Login — BigRed Fleet App</title>
+  
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#ef4444" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="BigRed Fleet App" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
-<body class="min-h-screen flex items-center justify-center bg-red-500 text-white">
-  <div class="bg-red-500 text-white flex flex-col items-center justify-center w-full max-w-md px-6 py-8">
-    <h1 class="text-3xl font-bold mb-2">Mechanic login</h1>
-    <p class="text-lg opacity-90 mb-8">Enter your credentials to continue</p>
-
-    <div class="w-full space-y-4">
-      <div>
-        <label class="text-sm opacity-90 mb-2 block">Your name</label>
-        <select id="mechName" required 
-                class="w-full px-4 py-3 rounded-xl text-gray-800 bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-white/50"></select>
+<body class="min-h-screen bg-red-500 text-white px-4">
+  <div class="flex flex-col items-center justify-center min-h-screen">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 mb-4">
+        <i data-lucide="wrench" class="w-8 h-8"></i>
       </div>
-
-      <div>
-        <label class="text-sm opacity-90 mb-2 block">PIN</label>
-        <input id="mechPin" required inputmode="numeric" pattern="[0-9]*" maxlength="8"
-               class="w-full px-4 py-3 rounded-xl text-gray-800 bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-white/50 tracking-widest"
-               placeholder="••••••" />
-      </div>
-
-      <button id="mechLoginBtn"
-              class="w-full rounded-xl bg-white text-red-600 font-semibold px-6 py-4 shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50">
-        Sign in
-      </button>
-
-      <div id="loginMsg" class="text-sm text-white min-h-[1.25rem]"></div>
+      <h1 class="text-4xl font-bold mb-3">Mechanic Login</h1>
+      <p class="text-xl opacity-90">Enter your credentials to continue</p>
     </div>
 
-    <div class="mt-6 text-sm opacity-90">
-      Guide? <a class="text-white hover:underline" href="./guide-login.html">Go to guide login</a>
+    <!-- Login Form -->
+    <div class="w-full max-w-md mb-8">
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+        <form class="space-y-6" onsubmit="return false;">
+          <div>
+            <label class="block text-sm font-medium text-white/90 mb-2">Your name</label>
+            <select id="mechName" required 
+                    class="w-full px-4 py-3 rounded-xl text-gray-800 bg-white shadow-lg border-0 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-red-500 transition-all duration-200">
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-white/90 mb-2">PIN</label>
+            <input id="mechPin" required inputmode="numeric" pattern="[0-9]*" maxlength="8"
+                   class="w-full px-4 py-3 rounded-xl text-gray-800 bg-white shadow-lg border-0 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-red-500 tracking-widest transition-all duration-200"
+                   placeholder="••••••••" />
+          </div>
+
+          <button id="mechLoginBtn" type="submit"
+                  class="w-full bg-white text-red-600 font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-red-500">
+            Sign in
+          </button>
+
+          <div id="loginMsg" class="text-sm text-white/90 min-h-[1.25rem] text-center"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="w-full max-w-md">
+      <a href="./guide-login.html" 
+         class="inline-flex items-center justify-center gap-3 w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 hover:bg-white/20 hover:border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50">
+        <i data-lucide="user" class="w-5 h-5"></i>
+        I am a Guide
+      </a>
+    </div>
+
+    <!-- Back to Main -->
+    <div class="mt-8">
+      <a href="./index.html" 
+         class="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors duration-200">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        Back to main
+      </a>
     </div>
   </div>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(registration => console.log('SW registered'))
+          .catch(error => console.log('SW registration failed'));
+      });
+    }
+  </script>
 
   <script type="module" src="./supabase.js"></script>
   <script type="module" src="./api.js"></script>
   <script type="module" src="./mechanic-login.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
 </body>
 </html>

@@ -563,8 +563,8 @@ async function renderTickets(tickets = null) {
               }">${st}</span>
             </div>
             <div class="flex justify-center gap-4 mt-2">
-              <button type="button" class="btn btn-primary btn-start" data-action="start">Start</button>
-              <button type="button" class="btn btn-success btn-done" data-action="done">Done</button>
+              <button type="button" class="btn btn-primary" data-action="start">Start</button>
+              <button type="button" class="btn btn-success" data-action="done">Done</button>
               <button
                 class="btn btn-secondary mech-testdrive"
                 data-action="request-testdrive"
@@ -587,7 +587,7 @@ async function renderTickets(tickets = null) {
                 <div class="text-slate-600 text-sm uppercase tracking-wide font-medium">Assignee</div>
                 <div class="assignee-line text-slate-800 text-sm mt-0.5">${t.assignee ? (assigneeNameByUserId.get(t.assignee) || t.assignee) : '—'}</div>
               </div>
-              <button type="button" class="btn btn-secondary assign-btn" data-action="assign">Assign to me</button>
+              <button type="button" class="btn btn-secondary" data-action="assign">Assign to me</button>
             </div>
 
             <div class="grid grid-cols-2 gap-3 mt-4">
@@ -601,7 +601,7 @@ async function renderTickets(tickets = null) {
               </div>
             </div>
             <div class="flex gap-2 mt-2">
-              <button type="button" class="btn btn-primary px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 border text-sm" data-role="save-odo">Save odometer</button>
+              <button type="button" class="btn btn-primary px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 border text-sm text-[#475569]" data-role="save-odo">Save odometer</button>
             </div>
 
             <div class="grid grid-cols-2 gap-3 mt-4">
@@ -1286,21 +1286,21 @@ async function loadMyDealerActive() {
 
   for (const row of data) {
     const li = document.createElement('li');
-    li.className = 'item-row flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 rounded-lg border border-gray-200 bg-white/60';
+    li.className = 'item-row flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4';
 
     const left = document.createElement('div');
     const buggyNum = DEALER.mapById.get(row.buggy_id) ?? '—';
     left.innerHTML = `
       <div class="flex items-center gap-2 mb-1">
-        <div class="text-base sm:text-lg font-bold text-slate-800">#${buggyNum}</div>
-        <span class="badge badge-sm bg-amber-100 text-amber-800 text-xs px-2 py-1">active</span>
+        <div class="text-base sm:text-lg font-bold text-gray-800">#${buggyNum}</div>
+        <span class="badge badge-sm badge-warning">active</span>
       </div>
-      <div class="text-sm sm:text-base text-slate-700 mb-1">${row.issue}</div>
-      <div class="text-xs sm:text-sm text-slate-500">Given: ${new Date(row.given_at).toLocaleString()}</div>
+      <div class="text-sm sm:text-base text-gray-700 mb-1">${row.issue}</div>
+      <div class="text-xs sm:text-sm text-gray-500">Given: ${new Date(row.given_at).toLocaleString()}</div>
     `;
 
     const btn = document.createElement('button');
-    btn.className = 'btn btn-secondary px-3 py-2 min-w-[120px] text-center text-sm w-full sm:w-auto text-white';
+    btn.className = 'btn btn-secondary px-3 py-2 min-w-[120px] text-center text-sm w-full sm:w-auto';
     btn.textContent = 'Mark returned';
     btn.onclick = () => handleMarkReturnedDealer(row.id);
 
